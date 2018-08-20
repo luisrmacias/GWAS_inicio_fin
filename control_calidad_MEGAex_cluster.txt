@@ -1,0 +1,112 @@
+###criterios de calidad utilizados
+
+Frecuencia alélica mayor a 0.03 y 0.05
+Identidad genómica menos a 0.08
+Genotipos completos por individuo y por muestra 0.95
+Equilibrio de Hardy-Weinberg menor a 1e-5
+grupo=terceros_adultos
+
+##se procede de agregar_genero.R y cambio_ids_variantes.txt
+
+##se genera lista de marcadores a filtrar por baja genotipificación individual, de SNP, frecuencia alélica y equilibrio de Hardy-Weinberg. Este último en controles.
+
+plink --bfile calidad/cluster2/$grupo --missing --out listas/eliminacion_QC/cluster2/genotipificacion_terceros
+
+plink --bfile calidad/cluster2/$grupo --freq --out listas/eliminacion_QC/cluster2/frecuencia_terceros
+
+plink --bfile calidad/cluster2/$grupo --hardy --out listas/eliminacion_QC/cluster2/HWE_terceros
+
+awk '$5>=0.05' listas/eliminacion_QC/cluster2/genotipificacion_terceros.lmiss | wc
+
+awk '$5>=0.05 {print $2}' listas/eliminacion_QC/cluster2/genotipificacion_terceros.lmiss > listas/eliminacion_QC/cluster2/temp.txt
+
+awk '$5<0.05 {print $2}' listas/eliminacion_QC/cluster2/frecuencia_terceros.frq | grep -f listas/eliminacion_QC/cluster2/temp.txt - -wFvc
+
+## los individuos de la placa 10 están duplicados, se eliminan
+diff -y <(cut -f 2 -d " " calidad/cluster2/adultos.fam | sort) <(cut -f 2 -d " " calidad/cluster2/$grupo.fam | sort) | grep -e ">" -e "<" -e "|" -v > listas/grupos/enambas_asignaciones.txt
+
+grep -f listas/grupos/enambas_asignaciones.txt calidad/cluster2/$grupo.fam | cut -f 1,2 -d " " > temp.txt
+
+mv temp.txt listas/grupos/enambas_asignaciones.txt
+
+plink --bfile calidad/cluster2/$grupo --remove listas/grupos/enambas_asignaciones.txt --make-bed --out calidad/cluster2/$grupo
+##fusionamos con últimas y primeras placas,
+plink --bfile calidad/cluster2/$grupo --bmerge calidad/MEGAex_cluster/fusion_adultos_ago17 --allow-no-sex --make-bed --out calidad/MEGAex_cluster/fusion_adultos_jul18
+
+plink --bfile calidad/cluster2/$grupo --exclude calidad/MEGAex_cluster/fusion_adultos_jul18-merge.missnp --make-bed --out calidad/cluster2/$grupo
+
+plink --bfile calidad/MEGAex_cluster/fusion_adultos_jul18 --geno 0.05 --make-bed --out calidad/MEGAex_cluster/fusion_adultos_jul18.QC
+
+mv calidad/MEGAex_cluster/fusion_adultos_jul18.QC.log calidad/MEGAex_cluster/primer_filtro_fusion.log
+
+##para cálculo de componentes e imputación
+
+plink --bfile calidad/MEGAex_cluster/fusion_adultos_jul18.QC --hwe 1e-5 --mind 0.05 --make-bed --out ancestria/MEGAex_cluster/fusion_adultos_jul18.QC
+###########################################
+
+plink --bfile calidad/MEGAex_cluster/fusion_adultos_jul18.QC --maf 0.05 --hwe 1e-5 --make-bed --out calidad/MEGAex_cluster/fusion_adultos_jul18.QC
+
+mv calidad/MEGAex_cluster/fusion_adultos_jul18.QC.log calidad/MEGAex_cluster/segundo_filtro_fusion.log
+
+plink --bfile calidad/MEGAex_cluster/fusion_adultos_jul18.QC --mind 0.05 --make-bed --out calidad/MEGAex_cluster/fusion_adultos_jul18.QC
+
+plink --bfile calidad/cluster2/terceros_adultos.QC --test-missing --pfilter 1e-6 --out calidad/grupos/faltantes_fusion
+
+plink --bfile calidad/MEGAex_cluster/fusion_adultos_jul18.QC --genome --out calidad/MEGAex_cluster/fusion_adultos_jul18.QC
+
+##se detecta una duplicación, 713 RL281 714 RL282, 820 RL_447 866 GEA_27 y 676 RL115 817 RL_384. RL111 con controles, muy raro
+ 53 pares de parientes de primer grado en Medix
+
+sort -grk10 calidad/MEGAex_cluster/fusion_adultos_jul18.QC.genome | head -226 | tr -s [:blank:] "\t" | cut -f 2-5 > listas/eliminacion_QC/elim_dupli2.txt
+
+cat <(cut -f 1,2 listas/eliminacion_QC/elim_dupli2.txt) <(cut -f3,4 listas/eliminacion_QC/elim_dupli2.txt) | sort -u > listas/eliminacion_QC/elim_dupli3.txtsort -u listas/eliminacion_QC/elim_dupli3.txt -o listas/eliminacion_QC/elim_dupli3.txt 
+
+plink --bfile calidad/MEGAex_cluster/fusion_adultos_jul18.QC --remove listas/eliminacion_QC/elim_dupli3.txt --make-bed --out calidad/MEGAex_cluster/fusion_adultos_jul18.QC
+
+##se verifica sexo genotípico en relación al registrado
+plink --bfile calidad/MEGAex_cluster/fusion_adultos_jul18.QC --check-sex --out calidad/MEGAex_cluster/fusion_adultos.QC
+awk '($3==1 && $4==2) || ($3==2 && $4==1)' calidad/MEGAex_cluster/fusion_adultos.QC.sexcheck
+
+##verificación de sexo problemática por no contar con marcadores del Y
+
+awk '{print $1,$2, $1+1440,$2}' calidad/cluster2/adultos.fam > listas/eliminacion_QC/cambio_idfamiliar.txt
+plink --bfile calidad/cluster2/fusion_adultos --update-ids listas/eliminacion_QC/cambio_idfamiliar.txt --make-bed --out calidad/cluster2/fusion_adultos
+
+plink --bfile calidad/cluster2/fusion_adultos.QC --update-ids listas/eliminacion_QC/cambio_idfamiliar.txt --make-bed --out calidad/cluster2/fusion_adultos.QC
+rm calidad/cluster2/*~
+
+###################################
+###integramos nuevos
+
+plink --bfile calidad/cluster2/agosto_2017 --missing --out listas/eliminacion_QC/cluster2/genotipificacion_ago17
+plink --bfile calidad/cluster2/agosto_2017 --freq --out listas/eliminacion_QC/cluster2/frecuencia_ago17
+plink --bfile calidad/cluster2/agosto_2017 --hardy --out listas/eliminacion_QC/cluster2/HWE_ago17
+
+awk '$5>=0.05' listas/eliminacion_QC/cluster2/genotipificacion_ago17.lmiss | wc
+
+awk '$5>=0.05 {print $2}' listas/eliminacion_QC/cluster2/genotipificacion_ago17.lmiss > listas/eliminacion_QC/cluster2/temp.txt
+
+awk '$5<0.05 {print $2}' listas/eliminacion_QC/cluster2/frecuencia_ago17.frq | grep -f listas/eliminacion_QC/cluster2/temp.txt - -wFvc
+
+##fusionamos con últimas y primeras placas,
+##cambiamos identificador familiar para que no se sobreponga a anteriores
+##hay que sumar 2328
+awk '{print $1,$2, $1+2328,$2}' calidad/cluster2/agosto_2017.fam > listas/eliminacion_QC/cambio_idfamiliar.txt
+plink --bfile calidad/cluster2/agosto_2017 --update-ids listas/eliminacion_QC/cambio_idfamiliar.txt --make-bed --out calidad/cluster2/agosto_2017
+
+plink --bfile calidad/cluster2/agosto_2017 --geno 0.05 --make-bed --out calidad/cluster2/agosto_2017.QC
+plink --bfile calidad/cluster2/agosto_2017.QC --maf 0.05 --missing --out calidad/cluster2/agosto_2017.QC
+##empezamos imputación
+
+
+plink --bfile calidad/cluster2/agosto_2017 --bmerge calidad/cluster2/fusion_adultos.bed calidad/cluster2/fusion_adultos.bim calidad/cluster2/fusion_adultos.fam --allow-no-sex --make-bed --out calidad/cluster2/fusion_adultos_ago17
+
+plink --bfile calidad/cluster2/fusion_adultos_ago17 --geno 0.05 --make-bed --out calidad/cluster2/fusion_adultos_ago17
+
+mv calidad/cluster2/fusion_adultos_ago17.log calidad/cluster2/primer_filtro_fusion.log
+
+plink --bfile calidad/cluster2/fusion_adultos.QC --hwe 1e-5 --maf 0.05 --make-bed --out ancestria/cluster2/fusion_adultos_ago17.QC
+
+plink --bfile ancestria/cluster2/fusion_adultos_ago17.QC --mind 0.05 --make-bed --out ancestria/cluster2/fusion_adultos_ago17.QC
+
+plink --bfile calidad/cluster2/fusion_adultos_ago17 --geno 0.05 --make-bed --out ancestria/cluster2/adultos

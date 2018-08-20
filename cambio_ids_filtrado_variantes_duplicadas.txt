@@ -1,0 +1,31 @@
+##se crean archivos binarios
+cd ~/analisis_asociacion/adultos_mega/
+genos=fuentes/U16_010_888_Cluster_MEGA_Global/U16_010_888_Cluster_MEGA_Global
+##cambiamos los nombres
+
+plink --file $genos --update-name ../niños/niños/fuentes/Multi-EthnicGlobal_B1_b144_rsids.txt --chr-set 22 --make-bed --out calidad/cluster3/primeros_adultos
+
+##cut -f 2 calidad/MEGAex_cluster/agosto_2017.bim | sort | uniq -d > listas/eliminacion_QC/SNP_duplicados.list
+##cut -f 4 calidad/MEGAex_cluster/agosto_2017.bim | sort | uniq -d | grep -wf - calidad/MEGAex_cluster/agosto_2017.bim | cut -f2 >>  listas/eliminacion_QC/SNP_duplicados.list
+
+##identificación de variantes duplicadas es exageradamente tardado en BASH. Nos mudamos a R.
+R
+snp <- read.table("calidad/cluster2/terceros_adultos.bim")
+chr_pos <- snp[,c(1,4)]
+prueba <- sort(c(which(duplicated(chr_pos)), which(duplicated(chr_pos))-1))
+head(chr_pos[prueba,], 49000)
+##parece haber seleccionado lo que se buscaba
+rm(prueba)
+unicos <- snp[!duplicated(chr_pos),2]
+write.table(unicos, "listas/eliminacion_QC/SNP_unicos.list", row.names=FALSE, col.names=FALSE, quote=FALSE)
+q()
+
+plink --bfile calidad/cluster2/terceros_adultos --extract listas/eliminacion_QC/SNP_unicos.list --make-bed --out calidad/cluster2/terceros_adultos
+##wow, funcionó
+
+##agregamos sexos, ver guión agregar_genero.R
+plink --bfile calidad/cluster2/terceros_adultos --update-sex listas/integrar_sexos.txt --make-bed --out calidad/cluster2/terceros_adultos
+
+##agregamos estado de caso y control
+awk -i inplace '$2~/GC/ || $2~/ICN/ {$6=1} 1' calidad/cluster2/primeros_adultos.fam
+awk -i inplace '$2~/SOL/ || $2~/RED/ || $2~/CON/ || $2~/TER/ || $2~/MZ1/ {$6=2} 1' calidad/cluster2/primeros_adultos.fam
