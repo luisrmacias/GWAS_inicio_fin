@@ -1,0 +1,5 @@
+ids <- read.table("calidad/cluster3/terceros_adultos.fam")
+sexos <- read.table("cirugia_bar/imputados/fusionados/fusion_agosto2017.fam")
+sexos <- cbind(ids[,1:2], sexos$V5[pmatch(ids$V2, sexos$V2)])
+names(sexos) <- c("FID", "IID", "SEX")
+write.table(sexos, "listas/integrar_sexos_cero.txt", row.names=FALSE, quote=FALSE)

@@ -1,0 +1,7 @@
+##agregamos sexos, ver guión agregar_genero.R
+cut -f2 -d " " $genos.fam | xargs -Ihello grep hello -w - calidad/MEGAex_cluster/fusion_adultos_jul18.fam | cut -f 2,5 -d " " > listas/integrar_sexos_primeros.txt
+plink --bfile $genos --update-sex <(grep -v NA listas/integrar_sexos_cero.txt) --make-bed --out $genos
+
+##agregamos estado de caso y control
+awk -i inplace '$2~/GC/ || $2~/ICN/ {$6=1} 1' $genos.fam
+awk -i inplace '$2~/SOL/ || $2~/RED/ || $2~/CON/ || $2~/TER/ || $2~/MZ1/ {$6=2} 1' $genos.fam
