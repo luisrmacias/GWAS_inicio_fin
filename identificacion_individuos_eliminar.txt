@@ -6,5 +6,19 @@ mv adultos_ideneli.log filtro_frecuencia_hardy.log
 plink --bfile adultos_ideneli --missing --out adultos_ideneli
 plink --bfile adultos_ideneli --mind 0.05 --make-bed --out adultos_ideneli
 plink --bfile adultos_ideneli --genome --out adultos_ideneli
-awk '$10>0.06' adultos_ideneli.genome | sort -grk 10 | grep -v -e CON -e CTR
-awt '$10<0.6 && $10>0.12' adultos_ideneli.genome | sort -grk10 | less
+awk '$10>0.6' adultos_ideneli.genome | sort -grk 10 | grep -e CON -e CTR
+##controles internos coinciden, RL111 idéntico a controles internos
+awk '$10<0.6 && $10>0.2' adultos_ideneli.genome | wc
+##421 pares de parientes en primer o segundo grado
+plink --bfile adultos_ideneli --check-sex --out adultos_ideneli
+
+##individuos con genotipificación baja se encuentran en adultos_ideneli.irem
+##procedemos a selección de individuos duplicados
+awk '$10>0.6' adultos_ideneli.genome | sort -grk 10 | grep -v -e CTR
+awk '$10>0.6' adultos_ideneli.genome | sort -grk 10 | grep RL
+awk '$10>0.6' adultos_ideneli.genome | tr -s [:blank:] "\t" | sort -grk 10 | cut -f3 | grep RL | grep -f - ~/analisis_asociacion/adultos_mega/cirugia_bar/fenotipos/para_asoc/porciento_excesoIMCperdido.phen
+awk '$10>0.6' adultos_ideneli.genome | tr -s [:blank:] "\t" | sort -grk 10 | cut -f5 | grep RL | grep -f - ~/analisis_asociacion/adultos_mega/cirugia_bar/fenotipos/para_asoc/porciento_excesoIMCperdido.phen
+##RL_112 se elimina por encima de RL013 porque este último tiene seguimiento
+##RL115 se elimina por encima de RL_384 porque este último tiene doble genotipificación
+##Se elimina RL281
+##para el resto se eliminan ambos
