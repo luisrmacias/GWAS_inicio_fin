@@ -5,6 +5,7 @@ plink --bfile segundo_paso --bmerge primeros_adultos --allow-no-sex --make-bed -
 rm primer_paso*
 rm segundo_paso*
 rm *~
+plink --bfile adultos --geno 0.05 --make-bed --out adultos
 
 
 
