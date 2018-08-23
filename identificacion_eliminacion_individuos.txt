@@ -1,0 +1,43 @@
+##hacemos filtrado preliminar por frecuencia y Hardy-Weinberg (tasa de genotipificación se filtró en paso anterior)
+cd ~/analisis_asociacion/adultos_mega/calidad/cluster3
+plink --bfile adultos --freq --missing --hardy --out adultos
+plink --bfile adultos --maf 0.025 --hwe 1e-35 --make-bed --out adultos_ideneli
+mv adultos_ideneli.log filtro_frecuencia_hardy.log
+plink --bfile adultos_ideneli --missing --out adultos_ideneli
+plink --bfile adultos_ideneli --mind 0.05 --make-bed --out adultos_ideneli
+plink --bfile adultos_ideneli --genome --out adultos_ideneli
+awk '$10>0.6' adultos_ideneli.genome | sort -grk 10 | grep -e CON -e CTR
+##controles internos coinciden, RL111 idéntico a controles internos
+awk '$10<0.6 && $10>0.2' adultos_ideneli.genome | wc
+##421 pares de parientes en primer o segundo grado
+plink --bfile adultos_ideneli --check-sex --out adultos_ideneli
+
+##individuos con genotipificación baja se encuentran en adultos_ideneli.irem
+##procedemos a selección de individuos duplicados
+awk '$10>0.6' adultos_ideneli.genome | tr -s [:blank:] "\t" | cut -f1 --complement | sort -grk10 > ../../listas/eliminacion_QC/IBD_1.txt
+grep -v CTR ../../listas/eliminacion_QC/IBD_1.txt 
+##los controles coinciden entre sí
+grep RL | ../../listas/eliminacion_QC/IBD_1.txt
+cut -f2 ../../listas/eliminacion_QC/IBD_1.txt | grep RL | grep -f - ~/analisis_asociacion/adultos_mega/cirugia_bar/fenotipos/para_asoc/porciento_excesoIMCperdido.phen
+cut -f4 ../../listas/eliminacion_QC/IBD_1.txt | grep RL | grep -f - ~/analisis_asociacion/adultos_mega/cirugia_bar/fenotipos/para_asoc/porciento_excesoIMCperdido.phen
+##RL_112 se elimina por encima de RL013 porque este último tiene seguimiento
+##RL115 se elimina por encima de RL_384 porque este último tiene doble genotipificación
+##Se elimina RL281
+##para el resto se eliminan ambos
+grep -v -e RL -e CTR -e H1 ../../listas/eliminacion_QC/IBD_1.txt
+##de medix mantenemos segunda columna excepto MZ1_0998 por SOL_799
+grep -v -e RL -e CTR -e H1 ../../listas/eliminacion_QC/IBD_1.txt | cut -f1,2 | grep -v MZ1_0998 > ../../listas/eliminacion_QC/ind_dupli.txt
+grep SOL_799 ../../listas/eliminacion_QC/IBD_1.txt | cut -f3,4 >> ../../listas/eliminacion_QC/ind_dupli.txt
+##tendremos que hacer edición de RL a mano
+grep RL ../../listas/eliminacion_QC/IBD_1.txt | grep -v RL111  | cut -f 1-4 > temp.txt
+nano temp.txt
+cat temp.txt >> ../../listas/eliminacion_QC/ind_dupli.txt
+rm temp.txt
+cat <(grep -eCTR -eH1 ../../listas/eliminacion_QC/IBD_1.txt | cut -f1-2) <(grep -eCTR -eH1 ../../listas/eliminacion_QC/IBD_1.txt | cut -f3-4) | sort -u >> ../../listas/eliminacion_QC/ind_dupli.txt
+
+##tenemos lista de duplicados, sigue sexo discordante
+grep PROBLEM adultos_ideneli.sexcheck | awk '$3!=0' | tr -s [:blank:] "\t" | sed -e 's/^[ \t]*//' | cut -f1,2 > ../../listas/eliminacion_QC/noconcuerdasexo_ids.txt
+
+cat adultos_ideneli.irem ../../listas/eliminacion_QC/ind_dupli.txt ../../listas/eliminacion_QC/noconcuerdasexo_ids.txt | grep -v FID > ../../listas/eliminacion_QC/conjunto_eliminar.txt
+
+plink --bfile adultos --remove ../../listas/eliminacion_QC/conjunto_eliminar.txt --make-bed --out adultos_filtroind
