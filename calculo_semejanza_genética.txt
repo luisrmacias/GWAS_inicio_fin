@@ -1,0 +1,2 @@
+genos=calidad/cluster3/adultos.QC
+gcta64 --bfile $genos --make-grm-gz --autosome --out $genos
