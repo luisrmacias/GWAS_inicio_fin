@@ -1,0 +1,20 @@
+##ahora con genotipos imputados, ya no hacemos fusión o filtrado particular
+
+##venimos de guiones ~/CANDELA/haplotipos/indigenas/MEGA/guiones/fusion_NAT_CEU_YRI.txt e ~/repos/gwas_inicio_fin/identificacion_eliminacion_individuos.txt
+
+vcftools --gzvcf ~/CANDELA/haplotipos/indigenas/MEGA/ancestrales_mestizos/nat_ceu_yri_faseados.vcf.gz --plink --out ~/analisis_asociacion/cardio/ancestria/ancestrales
+cd ~/analisis_asociacion/cardio/ancestria/
+plink --file ancestrales --make-bed --out ancestrales
+rm ancestrales.ped ancestrales.map
+cd ~/analisis_asociacion/adultos_mega/ancestria/cluster3
+plink --bfile ../../calidad/cluster3/adultos_filtroind --bmerge ~/analisis_asociacion/cardio/ancestria/ancestrales --allow-no-sex --make-bed --out ancestrales_adultos
+##plink --bfile ancestrales --exclude ancestrales_GEA-merge.missnp --make-bed --out ancestrales
+##aparecen 2 marcadores duplicados con alelos diferentes
+##plink --bfile ../imputados/fusionados_GEA --exclude ancestrales_GEA-merge.missnp --make-bed --out ../imputados/fusionados_GEA
+##plink --bfile ../imputados/fusionados_GEA --bmerge ancestrales --allow-no-sex --make-bed --out ancestrales_GEA
+##no hubo discrepancias de alelos, parece que por fin arreglamos eso
+plink --bfile ancestrales_adultos --geno 0.1 --hwe 1e-10 --make-bed --out ancestrales_adultos
+plink --bfile ancestrales_adultos --indep 50 5 2 --out ancestrales_adultos
+rm *~
+plink --bfile ancestrales_adultos --extract ancestrales_adultos.prune.in --make-bed --out ancestrales_adultos_indep
+#####################################################
