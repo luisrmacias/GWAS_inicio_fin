@@ -1,0 +1,9 @@
+
+cd ~/analisis_asociacion/adultos_mega/ancestria/cluster3
+referencias=~/CANDELA/haplotipos/indigenas/MEGA/ancestrales_mestizos/plink/ancestrales
+plink --bfile ../../calidad/cluster3/adultos_filtroind --bmerge $referencias --allow-no-sex --make-bed --out ancestrales_adultos
+plink --bfile ancestrales_adultos --geno 0.1 --hwe 1e-10 --make-bed --out ancestrales_adultos
+plink --bfile ancestrales_adultos --indep 50 5 2 --out ancestrales_adultos
+rm *~
+plink --bfile ancestrales_adultos --extract ancestrales_adultos.prune.in --make-bed --out ancestrales_adultos_indep
+#####################################################
