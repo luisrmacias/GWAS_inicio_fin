@@ -1,17 +1,9 @@
 admixture ancestrales_adultos_indep.bed 3
 
-plink --bfile ../niños/niños/ancestria/ancestrales_segundos --flip ancestria/ancestrales_GEA-merge.missnp --make-bed --out ../niños/niños/ancestria/ancestrales_segundos
-plink --bfile ancestria/GEA_cc --bmerge ../niños/niños/ancestria/ancestrales --allow-no-sex --make-bed --out ancestria/ancestrales_GEA
-
-##85 SNP no coinciden, se eliminan
-plink --bfile ../niños/niños/ancestria/ancestrales_segundos --exclude ancestria/ancestrales_GEA-merge.missnp --make-bed --out ../niños/niños/ancestria/ancestrales_segundos
-plink --bfile ancestria/GEA_cc --bmerge ../niños/niños/ancestria/ancestrales_segundos --allow-no-sex --make-bed --out ancestria/ancestrales_GEA
-plink --bfile ancestria/ancestrales_GEA --geno 0.1 --hwe 1e-5 --maf 0.05 --make-bed --out ancestria/ancestrales_GEA
-
-
 ##se hace análisis de identidad alélica con estos SNP
-plink --bfile ancestria/ancestrales_GEA --genome --out ancestria/ancestrales_GEA
-plink --bfile ancestria/ancestrales_GEA --read-genome ancestria/ancestrales_GEA.genome --cluster --mds-plot 4 --out ancestria/ancestrales_GEA
+plink --bfile ancestrales_adultos_indep --genome --out ancestrales_adultos_indep
+plink --bfile ancestrales_adultos_indep --pca 10 header --out ancestrales_adultos_indep
+plink --bfile ancestrales_adultos_indep --read-genome ancestrales_adultos_indep.genome --cluster --mds-plot 4 --out ancestrales_adultos_indep
 #################################################################################
 
  	R

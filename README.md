@@ -9,3 +9,17 @@ Convertimos de formato de texto a binario, identificamos y filtramos variantes d
 Creamos archivo para cambio de sexo en archivo .fam
 - agregar_datos_muestra.txt
 Incluimos dato de sexo y estado de caso o control para obesidad en archivo .fam
+
+##carpeta QC
+fusionar_grupos.txt
+-unimos genotipos de los grupos/poblaciones de estudio
+identificacion_eliminacion_individuos.txt
+-Tras descartar SNP de baja calidad y no informativos identificamos y eliminamos individuos con tasa de genotipificación baja, sexo discordante y duplicados
+filtrado_variantes_preimput.txt
+-Creamos genotipos temporales para cálculo de indicadores poblacionales
+
+##carpeta poblacional
+fusion_ancestrales.txt
+-Unimos genotipos de población de estudio con poblaciones de referencias
+calculo_ancestria_pca.txt
+calculo_semejanza_genética.txt
