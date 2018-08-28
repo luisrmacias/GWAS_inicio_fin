@@ -1,0 +1,12 @@
+##nos movemos a la carpeta que contiene genotipos y resultados
+cd ~/analisis_asociacion/adultos_mega/calidad/cluster3
+mkdir poblacional
+mv ancestrales_adultos* poblacional
+mv componentes* poblacional
+mv pcs* poblacional
+
+##borramos lotes separados
+rm *[1-4]*
+
+##borramos genotipos intermedios (iden_eli)
+rm *iden_eli*

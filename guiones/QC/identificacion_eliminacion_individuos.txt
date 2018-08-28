@@ -10,6 +10,9 @@ awk '$10>0.6' adultos_ideneli.genome | sort -grk 10 | grep -e CON -e CTR | less
 ##controles internos coinciden, RL111 idéntico a controles internos
 awk '$10<0.6 && $10>0.2' adultos_ideneli.genome | wc
 ##421 pares de parientes en primer o segundo grado
+##búsqueda de individuos con mismo identificador y que no coincidan
+awk '$2==$4 && $9<0.9' poblacional/ancestrales_adultos_indep.genome
+
 plink --bfile adultos_ideneli --check-sex --out adultos_ideneli
 
 ##individuos con genotipificación baja se encuentran en adultos_ideneli.irem
