@@ -4,13 +4,15 @@ cd imputacion
 mkdir faseados
 car_referencias=~/CANDELA/haplotipos/indigenas/MEGA/universales_indigenas
 estudio=adultos
-for chr in {15..22}
+for chr in {10..20}
 do
 java -jar ~/scripts/beagleyut/bref3.03Jul18.40b.jar $car_referencias/nat_uni_extendido.$chr.vcf.gz > ref.$chr.bref3
 bcftools query -f '%CHROM\t%POS\t%REF\t%ALT\n' vcf/adultos.$chr.vcf | grep -vw -e A -e C -e T -e G | cut -f 1,2 > temp.txt
-bcftools view -T ^temp.txt vcf/adultos.$chr.vcf -oz -O temp.vcf.gz
+bcftools view -T ^temp.txt vcf/adultos.$chr.vcf -Oz -o temp.vcf.gz
 java -jar ~/scripts/beagleyut/conform-gt.24May16.cee.jar ref=$car_referencias/nat_uni_extendido.$chr.vcf.gz gt=temp.vcf.gz chrom=$chr match=ID out=mod.$estudio.$chr
 cd faseados
 nohup java -jar ~/scripts/beagleyut/beagle.26May18.835.jar ref=../ref.$chr.bref3 gt=../mod.$estudio.$chr.vcf.gz map=~/CANDELA/haplotipos/ref_beagle/listas/mapa_beagle/plink.chr$chr.GRCh37.map iterations=5 nthreads=22 window=30 overlap=4 out=adultos.chr$chr
 cd ..
+rm *.*
 done
+
