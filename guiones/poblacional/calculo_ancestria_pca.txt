@@ -5,5 +5,5 @@ plink --bfile ancestrales_adultos_indep --genome --out ancestrales_adultos_indep
 plink --bfile ancestrales_adultos_indep --pca 10 header --out ancestrales_adultos_indep
 plink --bfile ancestrales_adultos_indep --read-genome ancestrales_adultos_indep.genome --cluster --mds-plot 4 --out ancestrales_adultos_indep
 #################################################################################
-vim ancestrales_GEA.3.Q
+nano ancestrales_adultos_indep.3.Q
 cut -f 2-7 -d " " ancestrales_adultos_indep.eigenvec | paste - ancestrales_adultos_indep.3.Q | grep -e RL -e GEA -e MZ1 -e TER -e RED -e SOL -e CON -e ICN -e GC -e IID > componentes_ancestrias_adultos.txt
