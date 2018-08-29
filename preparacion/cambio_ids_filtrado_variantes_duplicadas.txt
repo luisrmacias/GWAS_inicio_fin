@@ -1,7 +1,7 @@
 ##se crean archivos binarios
 cd ~/analisis_asociacion/adultos_mega/
 carpeta=calidad/cluster3
-genotipos="$(ls $carpeta | sed 's/.\{4\}$//' | sort -u)"
+genotipos="$(ls fuentes/condensado | sed 's/.\{4\}$//' | sort -u)"
 TEMPFILE=/tmp/$$.tmp
 echo 0 > $TEMPFILE
 for genos in $genotipos
@@ -10,7 +10,7 @@ COUNTER=$[$(cat $TEMPFILE) + 1]
 plink --file fuentes/condensado/$genos --list-duplicate-vars ids-only suppress-first --make-bed --out $carpeta/adultos.$COUNTER
 plink --bfile $carpeta/adultos.$COUNTER --exclude $carpeta/adultos.$COUNTER.dupvar --make-bed --out $carpeta/adultos.$COUNTER
 
-Rscript ~/repos/gwas_inicio_fin/sitios_dup_bim.R $carpeta/adultos.$COUNTER.bim
+Rscript ~/repos/gwas_inicio_fin/preparacion/sitios_dup_bim.R $carpeta/adultos.$COUNTER.bim
 paste listas/eliminacion_QC/SNP_duplicados.list <(awk '$1=$1".dup"' listas/eliminacion_QC/SNP_duplicados.list) > temp.txt
 mv temp.txt listas/eliminacion_QC/SNP_duplicados.list
 plink --bfile $carpeta/adultos.$COUNTER --update-name listas/eliminacion_QC/SNP_duplicados.list --make-bed --out $carpeta/adultos.$COUNTER

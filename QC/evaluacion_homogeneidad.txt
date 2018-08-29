@@ -1,0 +1,36 @@
+##hacemos lista de distintos lotes
+~/analisis_asociacion/adultos_mega/calidad/cluster3
+for i in {1..4}
+do
+awk -v g="$i" '{print $1,$2,$3=g}' adultos.$i.fam >> grupo_asig.txt
+done
+
+##comparamos frecuencias alélicas entre grupos de asignación con y sin filtro de frecuencia alélica
+plink --bfile adultos_filtroind --assoc --loop-assoc grupo_asig.txt --pfilter 1e-10 --out freq_entre_asignaciones
+plink --bfile adultos_filtroind --assoc --loop-assoc grupo_asig.txt --pfilter 1e-10 --maf 0.01 --hwe 1e-10 --out freq_entre_asignaciones_filtro
+
+##hacemos lista de estudios
+TEMPFILE=/tmp/$$.tmp
+echo 0 > $TEMPFILE
+COUNTER=$[$(cat $TEMPFILE) + 1]
+grep -e MZ1 -e RED -e SOL -e TER -e CON adultos_filtroind.fam | awk -v g=$COUNTER '{print $1, $2, $3=g}' > estudio.txt
+echo $COUNTER > $TEMPFILE
+
+for i in ICN GC RL GEA
+do
+COUNTER=$[$(cat $TEMPFILE) + 1]
+grep $i adultos_filtroind.fam | awk -v g=$COUNTER '{print $1, $2, $3=g}' >> estudio.txt
+echo $COUNTER > $TEMPFILE
+done
+unlink $TEMPFILE
+
+##comparamos frecuencias alélicas entre estudios con y sin filtro de frecuencia alélica
+plink --bfile adultos_filtroind --assoc --loop-assoc estudio.txt --pfilter 1e-10 --out freq_entre_estudios
+plink --bfile adultos_filtroind --assoc --loop-assoc estudio.txt --pfilter 1e-10 --maf 0.01 --hwe 1e-10 --out freq_entre_estudios_filtro
+
+##tras inspeción detallada de los resultados decidimos eliminar SNP que en las comparaciones de asignaciones y estudio difieren entre los grupos con significancia menor a 1e-14 (16 snp)
+awk '$9<1e-14' *filtro.[1-4]* | tr -s [:blank:] "\t" | cut -f3 | sort -u > snp_difieren_estudio_asignacion.txt
+rm freq_entre_*
+plink --bfile adultos_filtroind --exclude snp_difieren_estudio_asignacion.txt --make-bed --out adultos_filtroind
+rm *~
+

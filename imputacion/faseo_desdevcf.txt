@@ -4,7 +4,7 @@ cd imputacion
 mkdir faseados
 car_referencias=~/CANDELA/haplotipos/indigenas/MEGA/universales_indigenas
 estudio=adultos
-for chr in {10..20}
+for chr in {10..21}
 do
 java -jar ~/scripts/beagleyut/bref3.03Jul18.40b.jar $car_referencias/nat_uni_extendido.$chr.vcf.gz > ref.$chr.bref3
 bcftools query -f '%CHROM\t%POS\t%REF\t%ALT\n' vcf/adultos.$chr.vcf | grep -vw -e A -e C -e T -e G | cut -f 1,2 > temp.txt
