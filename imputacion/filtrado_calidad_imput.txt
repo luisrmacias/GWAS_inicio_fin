@@ -1,5 +1,8 @@
-snp=rs2269533
-chr=22
-localizacion="$(zgrep -w $snp faseados/*$chr.vcf.gz | cut -f 1,2 | tr "\t" ":")"
-bcftools view -t $localizacion imputados/$chr.vcf.gz | bcftools query -f '[\t%SAMPLE\t%DS\n]' | awk '$2<=0.05 || ($2>=0.95 && $2<=1.05) || $2>=1.95 {print $1}' | grep -wf - imputados/fusionados/GEA.QC.fam | cut -f 1,2 -d " " > listas/grupos/tmp.indv
-plink --bfile imputados/fusionados/GEA.QC --keep listas/grupos/tmp.indv --snp $snp --recode A --out asociacion/locales/HMOX1
+estudio=adultos
+cd faseados
+for chr in {1..21}
+do
+        tabix $estudio.chr$chr.vcf.gz
+        bcftools view -i 'AF<0.01 || DR2>=0.8' $estudio.chr$chr.vcf.gz -Oz -o filtrado.$estudio.$chr.vcf.gz && tabix -f filtrado.$estudio.$chr.vcf.gz
+done
+

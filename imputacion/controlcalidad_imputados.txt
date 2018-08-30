@@ -1,40 +1,13 @@
-##hacemos archivo con lista a fusionar
-cd
-
-ls imputados/ -v > imputados/listas/para_fusion.txt
-mkdir imputados/listas
-##quitamos los eliminados por baja genotipificación
-##cat calidad/*.irem | cut -f2 > imputados/listas/a_eliminar.txt
-##también quitamos los eliminados
-cut -f2 listas/eliminacion_QC/duplicados.txt | head -3 | cat - <(cut -f1 listas/eliminacion_QC/duplicados.txt) > imputados/listas/a_eliminar.txt
-##agregamos identificador familiar constante, no se pueden dejar líneas vacías en listado
-sed -i -e 's/^/0 /' imputados/listas/a_eliminar.txt
-
-cd imputados
-mkdir fusionados
-##bcftools concat -f listas/para_fusion.txt -Oz -o fusionados/GEA.vcf.gz
-plink --vcf prueba.vcf.gz --const-fid --remove listas/a_eliminar.txt --make-bed --out fusionados_GEA
-
-##paste <(cut -f1,2 -d " " fusionados/GEA.fam) <(cut -f2 -d " " fusionados/GEA.fam | xargs -Ihello grep -w hello ../calidad/GEA_cc.fam | cut -f 1,2 -d " ") > listas/cambio_id_fam.txt
-plink --bfile fusionados/GEA --update-ids listas/cambio_id_fam.txt --make-bed --out fusionados/GEA
-rm fusionados/*~
+estudio=fusion_agosto2018
+lista_sexos=/export/home/lmacias/analisis_asociacion/adultos_mega/listas/integrar_sexos_cero.txt
+plink --vcf $estudio.genoref.vcf.gz --const-fid --update-sex <(awk '$3!=0, $1=0 ""' $lista_sexos | sort -u) --make-bed --out $estudio
 
 ##agregamos fenotipo y sexo
-awk '$2~/GC/ {$6=1} 1' fusionados_GEA.fam > temp.txt
-awk '$2~/GP/ {$6=2} 1' temp.txt > fusionados_GEA.fam
+awk -i inplace '$2~/GC/ || $2~/ICN/ {$6=1} 1' $estudio.fam
+awk -i inplace '$2~/SOL/ || $2~/RED/ || $2~/CON/ || $2~/TER/ || $2~/MZ1/ {$6=2} 1' $estudio.fam
 
-R
-load("../../adultos_mega/replica/replica.RData")
-ids <- read.table("fusionados_GEA.fam")
-muh <- factor(bioquimicos_GEA$Sexo[pmatch(ids$V2, bioquimicos_GEA$id_MA)], labels=c(2,1))
-sexos <- cbind(ids[,1:2], muh)
-names(sexos) <- c("FID", "IID", "SEX")
-sexos$SEX <- as.numeric(levels(sexos$SEX))[sexos$SEX]
-sexos$SEX[is.na(sexos$SEX)] <- 0
-write.table(sexos, "listas/asignacion_sexo.txt", row.names=FALSE, quote=FALSE)
-q()
-
-plink --bfile fusionados_GEA --update-sex listas/asignacion_sexo.txt --make-bed --out fusionados_GEA
+cut -f2 -d " " $lista_sexos
+plink --bfile $estudio  --make-bed --out $estudio
 plink --bfile fusionados_GEA --geno 0.05 --make-bed --out fusionados_GEA.QC
 plink --bfile fusionados_GEA.QC --maf 0.05 --hwe 1e-5 --make-bed --out fusionados_GEA.QC
 ls *~
