@@ -1,0 +1,22 @@
+
+##GEA
+estudio=adultos
+cd faseados
+for chr in {1..21}
+do
+        tabix $estudio.chr$chr.vcf.gz
+        bcftools view -i 'AF<0.01 || DR2>=0.8' $estudio.chr$chr.vcf.gz -Oz -o filtrado.$estudio.$chr.vcf.gz && tabix -f filtrado.$estudio.$chr.vcf.gz
+done
+ls -v ref_beagle/mestizos/filtrado.GEA_cc.*.vcf.gz > ref_beagle/listas/fusion_filtrado.txt
+bcftools concat -f ref_beagle/listas/fusion_filtrado.txt -Oz -o ~/analisis_asociacion/cardio/imputados/$estudio.vcf.gz
+cd ~/analisis_asociacion/cardio/imputados/
+bcftools query -f '%CHROM\t%POS\n' $estudio.vcf.gz > ../listas/SNPS/enfusion_posfaseo.txt
+bcftools isec -c all -n-1 -w2 GEA_cc.vcf.gz ../calidad/adecuacion_alelos/GEA_cc.vcf.gz -Oz -o genotipados_noref.vcf.gz
+tabix genotipados_noref.vcf.gz
+bcftools concat -a $estudio.vcf.gz genotipados_noref.vcf.gz -Oz -o fusion_GEA.vcf.gz
+bcftools query -f '%CHROM\t%POS\n' $estudio.vcf.gz | wc
+bcftools query -f '%CHROM\t%POS\n' fusion_GEA.vcf.gz | wc
+bcftools query -f '%CHROM\t%POS\n' fusion_GEA.vcf.gz | sort | uniq -d
+##por fin
+rm genotipados_noref.vcf.gz genotipados_noref.vcf.gz.tbi
+
