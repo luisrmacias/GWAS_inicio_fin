@@ -1,0 +1,17 @@
+cd /export/home/lmacias/analisis_asociacion/adultos_mega
+genotipos=cirugia_bar/imputados/fusionados/fusion_agosto2018.QC
+
+##hacemos lista de estudios
+TEMPFILE=/tmp/$$.tmp
+echo 0 > $TEMPFILE
+COUNTER=$[$(cat $TEMPFILE) + 1]
+grep -e MZ1 -e RED -e SOL -e TER -e CON $genotipos.fam | awk -v g=$COUNTER '{print $1, $2, $5, $4=g}' > fenotipos/GCTA/sexos_estudio.cov
+echo $COUNTER > $TEMPFILE
+
+for i in ICN GC RL GEA
+do
+COUNTER=$[$(cat $TEMPFILE) + 1]
+grep $i $genotipos.fam | awk -v g=$COUNTER '{print $1, $2, $5, $3=g}' >> fenotipos/GCTA/sexos_estudio.cov
+echo $COUNTER > $TEMPFILE
+done
+unlink $TEMPFILE
