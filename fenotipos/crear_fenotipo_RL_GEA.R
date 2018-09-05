@@ -17,9 +17,11 @@ recientes$FECHA_NACIMIENTO <- as.Date(recientes$FECHA_NACIMIENTO, "%d/%m/%Y")
 names(recientes)[!names(recientes) %in% names(morbidos)]
 names(recientes)[grep("[0-9]\\.[1-5]", names(recientes))] <- gsub("\\.", "", grep("[0-9]\\.[1-5]", names(recientes), value=TRUE))
 names(recientes)[grep("sexo", names(recientes))] <- "GENERO"
+recientes$GENERO <- as.numeric(recientes$GENERO)*-1+3
 recientes$IID <- recientes$ID
 recientes <- recientes[-(212:213),]
 recientes <- recientes[names(recientes) %in% names(morbidos)]
+recientes <- recientes[,-grep("GENERO.1", names(recientes))]
 recientes[pmatch(names(morbidos), names(recientes))]
 agregar <- matrix(NA, nrow(recientes), ncol(morbidos[!names(morbidos) %in% names(recientes)]))
 colnames(agregar) <- names(morbidos)[!names(morbidos) %in% names(recientes)]
@@ -44,30 +46,34 @@ covar <- covar[!covar$IID %in% morbidos$IID,]
 covar <- rbind(covar, with(morbidos[morbidos$IID!="",], data.frame(FID=0,  IID=IID, EDAD=EDAD, IMC=IMC)))
 write.table(covar, "fenotipos/GCTA/covar.cov", row.names=FALSE, quote=FALSE)
 
+##car_fuerarango <- c("C4OHC3DC", "C51", "C6", "C16", "C161", "C161OH", "C16OH", "C18", "C181OH", "C182", "C18OH")
+##morbidos[,!names(morbidos) %in% car_fuerarango]
 amino <- 183:193
-carni <- 194:225
-
-amino <- morbidos[, amino]
-
+carni <- 194:214
 ##3ARG raíz cuadrada/4CIT log/5GLY logaritmo/6ALA logaritmo/7LEU raíz cuadrada/8MET log/9PHE raíz cuadrada/10TYR raíz cuadrada/11VAL igual/12ORN logaritmo/13PRO raíz cuadrada
-
-amino <- data.frame(FID=0, IID=morbidos$IID[complete.cases(amino)], amino[complete.cases(amino),])
-amino <- amino[amino$IID!="",]
-amino[,c(3,7,9,10,13)] <- sqrt(amino[,c(3,7,9,10,13)])
-amino[,c(4, 5, 6, 8, 12)] <- log(amino[,c(4, 5, 6, 8, 12)])
-write.table(amino, "cirugia_bar/fenotipos/para_asoc/aminoacidos_transformados.phen", row.names=FALSE, quote=FALSE)
+amino_trans <- sqrt(morbidos[amino[c(1,5,7,8,11)]])
+names(amino_trans) <- paste("raiz2", names(amino_trans), sep="_")
+amino_trans <- cbind(amino_trans, log(morbidos[amino[c(2:4,7,10)]]))
+names(amino_trans)[6:ncol(amino_trans)] <- paste("log", names(amino_trans)[6:ncol(amino_trans)], sep="_")
 
 
-carni <- morbidos[, carni]
 raiz <- c("SA", "C0", "C5OHC4DC", "C5DCC6OH", "C5", "C102")
 inverso <- c("C6DC", "C101")
 loga <- c("C3", "C4", "C51", "C6", "C8", "C81", "C161", "C16OH", "C10", "C14", "C18")
 raiz_inversa <- c("C2", "C4OHC3DC", "C16", "C12", "C121", "C141", "C142", "C14OH", "C181", "C182")
 
-carni[,names(carni) %in% raiz] <- sqrt(carni[,names(carni) %in% raiz])
-carni[,names(carni) %in% inverso] <- 1/carni[,names(carni) %in% inverso]
-carni[,names(carni) %in% loga] <- log(carni[,names(carni) %in% loga])
-carni[,names(carni) %in% raiz_inversa] <- carni[,names(carni) %in% raiz_inversa]^-0.5
+carni_trans <- sqrt(morbidos[,names(morbidos) %in% raiz])
+names(carni_trans) <- paste("raiz2", names(carni_trans), sep="_")
+carni_trans <- cbind(carni_trans, 1/morbidos[,names(morbidos) %in% inverso])
+names(carni_trans)[names(carni_trans) %in% inverso] <- paste("uno_sobre", inverso, sep="_")
+carni_trans <- cbind(carni_trans, log(morbidos[,names(morbidos) %in% loga]))
+names(carni_trans)[names(carni_trans) %in% loga] <- paste("log", names(carni_trans)[names(carni_trans) %in% loga], sep="_")
+carni_trans <- cbind(carni_trans, 1/sqrt(morbidos[,names(morbidos) %in% raiz_inversa]))
+names(carni_trans)[names(carni_trans) %in% raiz_inversa] <- paste("uno_sobre_raiz2", names(carni_trans)[names(carni_trans) %in% raiz_inversa], sep="_")
 
-carni <- data.frame(FID=0, IID=morbidos$IID, carni)
-write.table(carni, "cirugia_bar/fenotipos/para_asoc/carnitinas_transformadas.phen", row.names=FALSE, quote=FALSE)
+write.table(data.frame(FID=0, IID=morbidos$IID[complete.cases(amino_trans)], amino_trans[complete.cases(amino_trans),]), "cirugia_bar/fenotipos/para_asoc/aminoacidos_transformados.phen", row.names=FALSE, quote=FALSE)
+write.table(data.frame(FID=0, IID=morbidos$IID[complete.cases(carni_trans)], amino_trans[complete.cases(carni_trans),]), "cirugia_bar/fenotipos/para_asoc/carnitinas_transformadas.phen", row.names=FALSE, quote=FALSE)
+
+morbidos <- cbind(morbidos, amino_trans, carni_trans)
+rm(carni, amino, inverso, loga, raiz, raiz_inversa)
+save.image("cirugia_bar/fenotipos/histologia_revisada")
