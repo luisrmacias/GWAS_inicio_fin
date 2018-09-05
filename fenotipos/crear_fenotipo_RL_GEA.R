@@ -51,10 +51,12 @@ write.table(covar, "fenotipos/GCTA/covar.cov", row.names=FALSE, quote=FALSE)
 amino <- 183:193
 carni <- 194:214
 ##3ARG raíz cuadrada/4CIT log/5GLY logaritmo/6ALA logaritmo/7LEU raíz cuadrada/8MET log/9PHE raíz cuadrada/10TYR raíz cuadrada/11VAL igual/12ORN logaritmo/13PRO raíz cuadrada
-amino_trans <- sqrt(morbidos[amino[c(1,5,7,8,11)]])
+raiz <- c("ARG", "LEU", "PHE", "TYR", "PRO")
+loga <- c("CIT", "GLY", "ALA", "MET", "ORN")
+amino_trans <- sqrt(morbidos[,names(morbidos) %in% raiz])
 names(amino_trans) <- paste("raiz2", names(amino_trans), sep="_")
-amino_trans <- cbind(amino_trans, log(morbidos[amino[c(2:4,7,10)]]))
-names(amino_trans)[6:ncol(amino_trans)] <- paste("log", names(amino_trans)[6:ncol(amino_trans)], sep="_")
+amino_trans <- cbind(amino_trans, log(morbidos[, names(morbidos) %in% loga]))
+names(amino_trans)[(length(raiz)+1):ncol(amino_trans)] <- paste("log", names(amino_trans)[(length(raiz)+1):ncol(amino_trans)], sep="_")
 
 
 raiz <- c("SA", "C0", "C5OHC4DC", "C5DCC6OH", "C5", "C102")
@@ -75,5 +77,5 @@ write.table(data.frame(FID=0, IID=morbidos$IID[complete.cases(amino_trans)], ami
 write.table(data.frame(FID=0, IID=morbidos$IID[complete.cases(carni_trans)], amino_trans[complete.cases(carni_trans),]), "cirugia_bar/fenotipos/para_asoc/carnitinas_transformadas.phen", row.names=FALSE, quote=FALSE)
 
 morbidos <- cbind(morbidos, amino_trans, carni_trans)
-rm(carni, amino, inverso, loga, raiz, raiz_inversa)
+rm(carni_trans, amino_trans, inverso, loga, raiz, raiz_inversa)
 save.image("cirugia_bar/fenotipos/histologia_revisada")
