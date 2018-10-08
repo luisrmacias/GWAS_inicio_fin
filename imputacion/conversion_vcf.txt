@@ -1,11 +1,11 @@
-cd ~/lmacias/analisis_asociacion/adultos_mega/calidad/cluster3
+cd ~/analisis_asociacion/DCA/analisis_DCA
 mkdir imputacion
 mkdir imputacion/vcf
-base=adultos_filtroind
+base=DCA
 grep -c -e RL -e GEA -e ICN -e GC -e MZ1 -e RED -e TER -e CON -e SOL $base.fam
 for chr in {1..22}
 do
-	plink --bfile $base --chr $chr --keep <(grep -e RL -e GEA -e ICN -e GC -e MZ1 -e RED -e TER -e CON -e SOL $base.fam) --recode vcf-iid --geno 0.9999 --mac 5 --out imputacion/vcf/adultos.$chr
+	plink --bfile $base.QC --chr $chr --recode vcf-iid --geno 0.9999 --mac 5 --out imputacion/vcf/$base.$chr
 done
 grep -r Warning imputacion/vcf/ | less
 grep -r removed imputacion/vcf/ | less
