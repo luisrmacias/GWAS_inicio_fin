@@ -4,19 +4,20 @@ carpeta=calidad/cluster3
 genotipos="$(ls fuentes/condensado | sed 's/.\{4\}$//' | sort -u)"
 TEMPFILE=/tmp/$$.tmp
 echo 0 > $TEMPFILE
+proyecto=niños
 for genos in $genotipos
 do
 COUNTER=$[$(cat $TEMPFILE) + 1]
-plink --file fuentes/condensado/$genos --list-duplicate-vars ids-only suppress-first --make-bed --out $carpeta/adultos.$COUNTER
-plink --bfile $carpeta/adultos.$COUNTER --exclude $carpeta/adultos.$COUNTER.dupvar --make-bed --out $carpeta/adultos.$COUNTER
+plink --bfile fuentes/condensado/$genos --list-duplicate-vars ids-only suppress-first --make-bed --out $carpeta/$proyecto.$COUNTER
+plink --bfile $carpeta/$proyecto.$COUNTER --exclude $carpeta/$proyecto.$COUNTER.dupvar --make-bed --out $carpeta/$proyecto.$COUNTER
 
-Rscript ~/repos/gwas_inicio_fin/preparacion/sitios_dup_bim.R $carpeta/adultos.$COUNTER.bim
+Rscript ~/repos/gwas_inicio_fin/preparacion/sitios_dup_bim.R $carpeta/$proyecto.$COUNTER.bim
 paste listas/eliminacion_QC/SNP_duplicados.list <(awk '$1=$1".dup"' listas/eliminacion_QC/SNP_duplicados.list) > temp.txt
 mv temp.txt listas/eliminacion_QC/SNP_duplicados.list
-plink --bfile $carpeta/adultos.$COUNTER --update-name listas/eliminacion_QC/SNP_duplicados.list --make-bed --out $carpeta/adultos.$COUNTER
-plink --bfile $carpeta/adultos.$COUNTER --exclude <(cut -f2 listas/eliminacion_QC/SNP_duplicados.list) --make-bed --out $carpeta/adultos.$COUNTER
+plink --bfile $carpeta/$proyecto.$COUNTER --update-name listas/eliminacion_QC/SNP_duplicados.list --make-bed --out $carpeta/$proyecto.$COUNTER
+plink --bfile $carpeta/$proyecto.$COUNTER --exclude <(cut -f2 listas/eliminacion_QC/SNP_duplicados.list) --make-bed --out $carpeta/$proyecto.$COUNTER
 ##cambiamos los nombres
-plink --bfile $carpeta/adultos.$COUNTER --update-name ../niños/niños/fuentes/Multi-EthnicGlobal_B1_b144_rsids.txt --make-bed --out $carpeta/adultos.$COUNTER
+plink --bfile $carpeta/$proyecto.$COUNTER --update-name ~/analisis_asociacion/niños/niños/fuentes/Multi-EthnicGlobal_B1_b144_rsids.txt --make-bed --out $carpeta/$proyecto.$COUNTER
 rm calidad/cluster3/*~
 echo $COUNTER > $TEMPFILE
 done
