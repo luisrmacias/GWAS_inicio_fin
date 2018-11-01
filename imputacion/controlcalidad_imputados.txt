@@ -1,11 +1,11 @@
 cd /export/home/lmacias/analisis_asociacion/adultos_mega/cirugia_bar/imputados/fusionados
 estudio=fusion_agosto2018
 lista_sexos=/export/home/lmacias/analisis_asociacion/adultos_mega/listas/integrar_sexos_cero.txt
-plink --vcf $estudio_genoref.vcf.gz --const-fid --update-sex <(awk '$3!=0, $1=0 ""' $lista_sexos | sort -u) --make-bed --out $estudio
+plink --vcf $estudio.genoref.vcf.gz --const-fid --update-sex integrar_sexos.txt --make-bed --out $estudio
 
 ##agregamos fenotipo y sexo
-awk -i inplace '$2~/GC/ || $2~/ICN/ {$6=1} 1' $estudio.fam
-awk -i inplace '$2~/SOL/ || $2~/RED/ || $2~/CON/ || $2~/TER/ || $2~/MZ1/ {$6=2} 1' $estudio.fam
+awk -i inplace '$2~/DCAC/ {$6=1} 1' $estudio.fam
+awk -i inplace '$2~/DCA/ {$6=2} 1' $estudio.fam
 
 cut -f2 -d " " $lista_sexos
 plink --bfile $estudio --geno 0.05 --make-bed --out $estudio.QC

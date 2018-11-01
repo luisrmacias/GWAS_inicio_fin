@@ -1,26 +1,26 @@
 cd ~/analisis_asociacion/adultos_mega/calidad/cluster3/imputacion/faseados
-ls -v filtrado.adultos.*.vcf.gz > fusion_filtrado.txt
+ls -v filtrado.$estudio.*.vcf.gz > fusion_filtrado.txt
 ##fusionamos genotipos de cada autosoma
 estudio=fusion_agosto2018
 bcftools concat -f fusion_filtrado.txt -Oz -o ~/analisis_asociacion/adultos_mega/cirugia_bar/imputados/fusionados/$estudio.vcf.gz
 
 ##buscamos variantes no incluídas en referencia de 1000 genomas pero sí en microarreglo
 cd ~/analisis_asociacion/adultos_mega/cirugia_bar/imputados/fusionados
-base=~/analisis_asociacion/adultos_mega/calidad/cluster3/adultos_filtroind
-plink --bfile $base --keep <(grep -e RL -e GEA -e ICN -e GC -e MZ1 -e RED -e TER -e CON -e SOL $base.fam) --recode vcf-iid --geno 0.9999 --mac 5 --out adultos_sinfasear
-bgzip adultos_sinfasear.vcf && tabix adultos_sinfasear.vcf.gz
+base=~/analisis_asociacion/DCA/analisis_DCA/DCA.QC
+plink --bfile $base --recode vcf-iid --geno 0.9999 --mac 5 --out adultos_sinfasear
+bgzip $estudio.sinfasear.vcf && tabix $estudio.sinfasear.vcf.gz
 bcftools query -f '%CHROM\t%POS\n' $estudio.vcf.gz > enfusion_posfaseo.txt
 tabix $estudio.vcf.gz
-bcftools isec -c all -n-1 -w2 $estudio.vcf.gz adultos_sinfasear.vcf.gz -Oz -o genotipados_noref.vcf.gz
+bcftools isec -c all -n-1 -w2 $estudio.vcf.gz $estudio.sinfasear.vcf.gz -Oz -o genotipados_noref.vcf.gz
 tabix genotipados_noref.vcf.gz
 
 ##agregamos variantes no incluídas en referencia de 1000 genomas a los genotipos faseados
-bcftools concat -a $estudio.vcf.gz genotipados_noref.vcf.gz -Oz -o $estudio_genoref.vcf.gz
+bcftools concat -a $estudio.vcf.gz genotipados_noref.vcf.gz -Oz -o $estudio.genoref.vcf.gz
 
 ##verificamos que hayamos logrado objetivo
 bcftools query -f '%CHROM\t%POS\n' $estudio.vcf.gz | wc
-bcftools query -f '%CHROM\t%POS\n' $estudio_genoref.vcf.gz | wc
-bcftools query -f '%CHROM\t%POS\n' $estudio_genoref.vcf.gz | sort | uniq -d
+bcftools query -f '%CHROM\t%POS\n' $estudio.genoref.vcf.gz | wc
+bcftools query -f '%CHROM\t%POS\n' $estudio.genoref.vcf.gz | sort | uniq -d
 ##por fin
 rm genotipados_noref.vcf.gz genotipados_noref.vcf.gz.tbi
 mv fusion_agosto2018.vcf* ~/analisis_asociacion/adultos_mega/calidad/cluster3/imputacion
