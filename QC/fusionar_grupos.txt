@@ -1,16 +1,16 @@
 cd calidad/cluster3
-plink --bfile adultos.1 --bmerge adultos.2 --allow-no-sex --make-bed --out primer_paso
-plink --bfile adultos.1 --exclude primer_paso-merge.missnp --allow-no-sex --make-bed --out adultos.1
-plink --bfile adultos.2 --exclude primer_paso-merge.missnp --allow-no-sex --make-bed --out adultos.2
-plink --bfile adultos.3 --exclude primer_paso-merge.missnp --allow-no-sex --make-bed --out adultos.3
-plink --bfile adultos.4 --exclude primer_paso-merge.missnp --allow-no-sex --make-bed --out adultos.4
+plink --bfile $proyecto.1 --bmerge $proyecto.2 --allow-no-sex --make-bed --out primer_paso
+plink --bfile $proyecto.1 --exclude primer_paso-merge.missnp --allow-no-sex --make-bed --out $proyecto.1
+plink --bfile $proyecto.2 --exclude primer_paso-merge.missnp --allow-no-sex --make-bed --out $proyecto.2
+plink --bfile $proyecto.3 --exclude primer_paso-merge.missnp --allow-no-sex --make-bed --out $proyecto.3
+plink --bfile $proyecto.4 --exclude primer_paso-merge.missnp --allow-no-sex --make-bed --out $proyecto.4
 
-plink --bfile adultos.1 --bmerge adultos.2 --allow-no-sex --make-bed --out primer_paso
-plink --bfile primer_paso --bmerge adultos.3 --allow-no-sex --make-bed --out segundo_paso
-plink --bfile segundo_paso --bmerge adultos.4 --allow-no-sex --make-bed --out adultos
+plink --bfile $proyecto.1 --bmerge $proyecto.2 --allow-no-sex --make-bed --out primer_paso
+plink --bfile primer_paso --bmerge $proyecto.3 --allow-no-sex --make-bed --out segundo_paso
+plink --bfile segundo_paso --bmerge $proyecto.4 --allow-no-sex --make-bed --out $proyecto
 rm primer_paso*
 rm segundo_paso*
-plink --bfile adultos --geno 0.05 --make-bed --out adultos
+plink --bfile $proyecto --geno 0.05 --make-bed --out $proyecto
 rm *~
 
 
