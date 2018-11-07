@@ -27,4 +27,3 @@ for (i in seq(ids))
 	ids[[i]][,6][is.na(ids[[i]][,6])] <- -9
 	write.table(ids[[i]], archivos[i], row.names=FALSE, col.names=FALSE, quote=FALSE)
 	}
-
