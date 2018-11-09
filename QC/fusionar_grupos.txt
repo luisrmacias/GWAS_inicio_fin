@@ -19,18 +19,17 @@ for (i in 1:26)
 cambiar <- cambiar[complete.cases(cambiar),]
 write.table(cambiar, "~/analisis_asociacion/niños/niños/listas/eliminacion_QC/cambio_ids_niños.1.txt", row.names=FALSE, quote=FALSE)
 
+cut -f2 niños.1.bim | sort | uniq -d > temp.txt
+plink --bfile $proyecto.1 --exclude temp.txt --make-bed --out $proyecto.1
 plink --bfile $proyecto.1 --update-name ~/analisis_asociacion/niños/niños/listas/eliminacion_QC/cambio_ids_niños.1.txt --make-bed --out $proyecto.1
 plink --bfile $proyecto.1 --bmerge $proyecto.2 --allow-no-sex --make-bed --out primer_paso
 plink --bfile $proyecto.1 --exclude primer_paso-merge.missnp --allow-no-sex --make-bed --out $proyecto.1
-plink --bfile $proyecto.2 --exclude primer_paso-merge.missnp --allow-no-sex --make-bed --out $proyecto.2
-plink --bfile $proyecto.3 --exclude primer_paso-merge.missnp --allow-no-sex --make-bed --out $proyecto.3
-plink --bfile $proyecto.4 --exclude primer_paso-merge.missnp --allow-no-sex --make-bed --out $proyecto.4
-
 plink --bfile $proyecto.1 --bmerge $proyecto.2 --allow-no-sex --make-bed --out primer_paso
-plink --bfile primer_paso --bmerge $proyecto.3 --allow-no-sex --make-bed --out segundo_paso
-plink --bfile segundo_paso --bmerge $proyecto.4 --allow-no-sex --make-bed --out $proyecto
+
+plink --bfile primer_paso --bmerge $proyecto.3 --allow-no-sex --make-bed --out $proyecto
+plink --bfile $proyecto.3 --exclude $proyecto-merge.missnp --allow-no-sex --make-bed --out $proyecto.3
+plink --bfile primer_paso --bmerge $proyecto.3 --allow-no-sex --make-bed --out $proyecto
 rm primer_paso*
-rm segundo_paso*
 plink --bfile $proyecto --geno 0.05 --make-bed --out $proyecto
 rm *~
 
