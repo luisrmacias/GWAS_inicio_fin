@@ -26,11 +26,11 @@ tabix $proyecto.2.vcf.gz
 
 for pob in 1 3
 do
-	for chr in {1..23}
+	for chr in {1..26}
 	do
 	bcftools view -i '(REF=="A" || REF=="G" || REF=="C" || REF=="T") && (ALT=="A" || ALT=="G" || ALT=="C" || ALT=="T")' $proyecto.$pob.$chr.vcf | cut -f2 | sort | uniq -d | grep -wf - $proyecto.$pob.$chr.vcf | cut -f 3 | sed '1d; n; d' > quitar.tmp
 	bcftools view -i '(REF=="A" || REF=="G" || REF=="C" || REF=="T") && (ALT=="A" || ALT=="G" || ALT=="C" || ALT=="T") && %ID!=@quitar.tmp' $proyecto.$pob.$chr.vcf -Oz -o temp.vcf.gz
-        java -jar ~/scripts/beagleyut/conform-gt.24May16.cee.jar ref=$proyecto.2.$chr.vcf.gz gt=temp.vcf.gz chrom=$chr match=ID out=mod.$proyecto.$pob.$chr	
+        java -jar ~/scripts/beagleyut/conform-gt.24May16.cee.jar ref=$proyecto.2.$chr.vcf.gz gt=temp.vcf.gz chrom=$chr match=POS out=mod.$proyecto.$pob.$chr	
 	tabix mod.$proyecto.$pob.$chr.vcf.gz
 	done
 done
