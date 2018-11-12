@@ -1,0 +1,58 @@
+cd /export/home/lmacias/analisis_asociacion/niños/niños/calidad/cluster3
+proyecto=niños
+mkdir adecuacion_alelos
+for pob in 1 2 3
+do
+	for chr in {1..26}
+	do
+	plink --bfile $proyecto.$pob --recode vcf-iid --chr $chr --out adecuacion_alelos/$proyecto.$pob.$chr
+	done
+done
+rm adecuacion_alelos/*.nosex
+rm adecuacion_alelos/*.log
+rm adecuacion_alelos/*.hh
+
+cd adecuacion_alelos
+
+##en el caso de los niños el segundo lote es la referencia, esto se corre una sola vez
+for chr in {1..24}
+do
+bcftools view -i '(REF=="A" || REF=="G" || REF=="C" || REF=="T") && (ALT=="A" || ALT=="G" || ALT=="C" || ALT=="T")' $proyecto.2.$chr.vcf | cut -f2 | sort | uniq -d | grep -wf - $proyecto.2.$chr.vcf | cut -f 3 | sed '1d; n; d' > quitar.tmp
+bcftools view -i '(REF=="A" || REF=="G" || REF=="C" || REF=="T") && (ALT=="A" || ALT=="G" || ALT=="C" || ALT=="T") && %ID!=@quitar.tmp' $proyecto.2.$chr.vcf | bgzip -c > $proyecto.2.$chr.vcf.gz && tabix $proyecto.2.$chr.vcf.gz
+done
+ls -v $proyecto.2*.vcf.gz > para_fusion.tmp
+bcftools concat -f para_fusion.tmp -Oz -o $proyecto.2.vcf.gz
+tabix $proyecto.2.vcf.gz
+
+for pob in 1 3
+do
+	for chr in {1..23}
+	do
+	bcftools view -i '(REF=="A" || REF=="G" || REF=="C" || REF=="T") && (ALT=="A" || ALT=="G" || ALT=="C" || ALT=="T")' $proyecto.$pob.$chr.vcf | cut -f2 | sort | uniq -d | grep -wf - $proyecto.$pob.$chr.vcf | cut -f 3 | sed '1d; n; d' > quitar.tmp
+	bcftools view -i '(REF=="A" || REF=="G" || REF=="C" || REF=="T") && (ALT=="A" || ALT=="G" || ALT=="C" || ALT=="T") && %ID!=@quitar.tmp' $proyecto.$pob.$chr.vcf -Oz -o temp.vcf.gz
+        java -jar ~/scripts/beagleyut/conform-gt.24May16.cee.jar ref=$proyecto.2.$chr.vcf.gz gt=temp.vcf.gz chrom=$chr match=ID out=mod.$proyecto.$pob.$chr	
+	tabix mod.$proyecto.$pob.$chr.vcf.gz
+	done
+done
+
+
+
+
+ls -v mod.$lote*.vcf.gz > para_fusion.tmp
+bcftools concat -f para_fusion.tmp -Oz -o mod.$lote.vcf.gz
+
+bcftools query -l mod.LANGEBIO.vcf.gz | grep "_" | paste - <(bcftools query -l mod.LANGEBIO.vcf.gz | grep "_" | tr "_" "\\.") > cambio_ids.tmp
+bcftools reheader -s cambio_ids.tmp mod.LANGEBIO.vcf.gz -o temp.vcf.gz
+mv temp.vcf.gz mod.LANGEBIO.vcf.gz
+tabix mod.$lote.vcf.gz
+
+bcftools merge UMI.vcf.gz mod.UMI2.vcf.gz mod.LANGEBIO.vcf.gz mod.MEGAex.vcf.gz -Oz -o GEA_cc.vcf.gz
+bcftools stats GEA_cc.vcf.gz | less
+rm *.vcf
+rm mod.*.*.vcf.gz
+rm mod.*.*.log
+rm mod.*.*.vcf.gz.tbi
+rm *.tmp
+rm temp*
+plink --vcf GEA_cc.vcf.gz --const-fid --make-bed --out ../GEA_cc
+
