@@ -32,7 +32,3 @@ plink --bfile primer_paso --bmerge $proyecto.3 --allow-no-sex --make-bed --out $
 rm primer_paso*
 plink --bfile $proyecto --geno 0.05 --make-bed --out $proyecto
 rm *~
-
-
-
-
