@@ -35,11 +35,8 @@ do
 	done
 done
 
-
-
-
-ls -v mod.$lote*.vcf.gz > para_fusion.tmp
-bcftools concat -f para_fusion.tmp -Oz -o mod.$lote.vcf.gz
+ls -v mod.$proyecto.3*.vcf.gz > para_fusion.tmp
+bcftools concat -f para_fusion.tmp -Oz -o mod.$proyecto.3.vcf.gz
 
 bcftools query -l mod.LANGEBIO.vcf.gz | grep "_" | paste - <(bcftools query -l mod.LANGEBIO.vcf.gz | grep "_" | tr "_" "\\.") > cambio_ids.tmp
 bcftools reheader -s cambio_ids.tmp mod.LANGEBIO.vcf.gz -o temp.vcf.gz
