@@ -1,13 +1,14 @@
 ##hacemos lista de distintos lotes
 ~/analisis_asociacion/adultos_mega/calidad/cluster3
-for i in {1..4}
+proyecto=niños
+for i in {1..3}
 do
-awk -v g="$i" '{print $1,$2,$3=g}' adultos.$i.fam >> grupo_asig.txt
+awk -v g="$i" '{print $1,$2,$3=g}' $proyecto.$i.fam >> grupo_asig.txt
 done
 
 ##comparamos frecuencias alélicas entre grupos de asignación con y sin filtro de frecuencia alélica
-plink --bfile adultos_filtroind --assoc --loop-assoc grupo_asig.txt --pfilter 1e-10 --out freq_entre_asignaciones
-plink --bfile adultos_filtroind --assoc --loop-assoc grupo_asig.txt --pfilter 1e-10 --maf 0.01 --hwe 1e-10 --out freq_entre_asignaciones_filtro
+plink --bfile $proyecto.filtroind --assoc --loop-assoc grupo_asig.txt --pfilter 1e-10 --out freq_entre_asignaciones
+plink --bfile $proyecto.filtroind --assoc --loop-assoc grupo_asig.txt --pfilter 1e-10 --maf 0.01 --hwe 1e-10 --out freq_entre_asignaciones_filtro
 
 ##hacemos lista de estudios
 TEMPFILE=/tmp/$$.tmp
@@ -34,3 +35,4 @@ rm freq_entre_*
 plink --bfile adultos_filtroind --exclude snp_difieren_estudio_asignacion.txt --make-bed --out adultos_filtroind
 rm *~
 
+##en niños solo 2 SNP difieren entre los grupos de asignación tras filtrado, rs112269191 y rs75733551, no los eliminamos, marcamos como sospechosos.

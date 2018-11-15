@@ -1,7 +1,7 @@
 cd ~/lmacias/analisis_asociacion/adultos_mega/calidad/cluster3
-plink --bfile adultos_filtroind --hwe 1e-5 --maf 0.05 --make-bed --out adultos.QC
+plink --bfile $proyecto.filtroind --hwe 1e-5 --maf 0.05 --make-bed --out $proyecto.QC
 
-plink --bfile adultos.QC --assoc --pfilter 0.1 --out prueba
+plink --bfile $proyecto.QC --assoc --pfilter 0.1 --out prueba
 sort -gk9 prueba.assoc
 ##se ve creíble
 
