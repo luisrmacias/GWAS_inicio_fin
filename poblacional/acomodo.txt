@@ -1,5 +1,5 @@
 ##nos movemos a la carpeta que contiene genotipos y resultados
-cd ~/analisis_asociacion/adultos_mega/calidad/cluster3
+cd ~/analisis_asociacion/niños/niños/calidad/cluster3
 mkdir poblacional
 mv ancestrales_adultos* poblacional
 mv componentes* poblacional

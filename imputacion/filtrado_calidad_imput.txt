@@ -1,9 +1,10 @@
-estudio=DCA
+proyecto=niños
 cd faseados
-bcftools view -i 'DR2>=0.8' -f '%CHROM\t%POS\n' $estudio.chr$chr.vcf.gz | grep IMP | cut -f8 | cut -f1 -d ";" | wc
-for chr in {1..21}
+chr=22
+bcftools view -i 'DR2>=0.8' -f '%CHROM\t%POS\n' $proyecto.chr$chr.vcf.gz | grep IMP | cut -f8 | cut -f1 -d ";" | wc
+for chr in {1..22}
 do
-        tabix $estudio.chr$chr.vcf.gz
-        bcftools view -i 'AF<0.01 || DR2>=0.8' $estudio.chr$chr.vcf.gz -Oz -o filtrado.$estudio.$chr.vcf.gz && tabix -f filtrado.$estudio.$chr.vcf.gz
+        tabix $proyecto.chr$chr.vcf.gz
+        bcftools view -i 'AF<0.01 || DR2>=0.8' $proyecto.chr$chr.vcf.gz -Oz -o filtrado.$proyecto.$chr.vcf.gz && tabix -f filtrado.$proyecto.$chr.vcf.gz
 done
 

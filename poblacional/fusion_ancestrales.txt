@@ -1,10 +1,11 @@
 
-cd ~/analisis_asociacion/adultos_mega/ancestria/cluster3
+cd ~/analisis_asociacion/adultos_mega/ancestria/cluster3/poblacional
+proyecto=niños
 referencias=~/CANDELA/haplotipos/indigenas/MEGA/ancestrales_mestizos/plink/ancestrales
-mestizos=~/analisis_asociacion/adultos_mega/cirugia_bar/imputados/fusionados/fusion_agosto2018.QC
-plink --bfile $mestizos --bmerge $referencias --allow-no-sex --make-bed --out ancestrales_adultos
-plink --bfile ancestrales_adultos --geno 0.1 --hwe 1e-10 --make-bed --out ancestrales_adultos
-plink --bfile ancestrales_adultos --indep 50 5 2 --out ancestrales_adultos
+mestizos=~/analisis_asociacion/niños/niños/imputados/fusionados/fusion_noviembre.QC
+plink --bfile $mestizos --bmerge $referencias --allow-no-sex --make-bed --out ancestrales.$proyecto
+plink --bfile ancestrales.$proyecto --geno 0.1 --hwe 1e-10 --make-bed --out ancestrales.$proyecto
+plink --bfile ancestrales.$proyecto --indep 50 5 2 --out ancestrales.$proyecto
 rm *~
-plink --bfile ancestrales_adultos --extract ancestrales_adultos.prune.in --make-bed --out ancestrales_adultos_indep
+plink --bfile ancestrales.$proyecto --extract ancestrales.$proyecto.prune.in --make-bed --out ancestrales.$proyecto.indep
 #####################################################

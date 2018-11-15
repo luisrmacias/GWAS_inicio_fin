@@ -1,11 +1,29 @@
 cd /export/home/lmacias/analisis_asociacion/adultos_mega/cirugia_bar/imputados/fusionados
-estudio=fusion_agosto2018
-lista_sexos=/export/home/lmacias/analisis_asociacion/adultos_mega/listas/integrar_sexos_cero.txt
-plink --vcf $estudio.genoref.vcf.gz --const-fid --update-sex integrar_sexos.txt --make-bed --out $estudio
+estudio=fusion_noviembre2018
+lista_sexos=/export/home/lmacias/analisis_asociacion/niños/niños/listas/integrar_sexos_cero.txt
+plink --vcf $estudio.genoref.vcf.gz --const-fid --update-sex $lista_sexos --make-bed --out $estudio
 
 ##agregamos fenotipo y sexo
 awk -i inplace '$2~/DCAC/ {$6=1} 1' $estudio.fam
 awk -i inplace '$2~/DCA/ {$6=2} 1' $estudio.fam
+
+##en los niños
+awk '{print 0, $2, $6}' imputados/fusionados/fusion.fam > temp.txt
+R
+fenos <- read.table("temp.txt")
+fam <- read.table("fusion_noviembre2018.fam")
+fam[,6] <- fenos[pmatch(fam[,2], fenos[,2]),3]
+fam[is.na(fam[,6]),]
+##faltan 3 en listado de fusión anterior, los buscamos en base
+load("../../fenotipos/R_bin/seminario.RData")
+longitud$BMIpercentile[grep("196$", longitud$Clave08)]
+##caso
+longitud$BMIpercentile[grep("264$", longitud$Clave11)]
+##control
+longitud$BMIpercentile[grep("272$", longitud$CLAVE2014)]
+##caso
+fam[is.na(fam[,6]),6] <- c(2, 1, 2)
+write.table(fam, "fusion_noviembre2018.fam", col.names=FALSE, row.names=FALSE, quote=FALSE)
 
 cut -f2 -d " " $lista_sexos
 plink --bfile $estudio --geno 0.05 --make-bed --out $estudio.QC
@@ -16,7 +34,7 @@ rm *~
 ##verificamos duplicados y parentezco
 plink --bfile $estudio.QC --genome --out $estudio.QC
 sort -grk10 $estudio.QC.genome | less
-awk '$10>0.9' $estudio.QC.genome 
+awk '$10>0.9' $estudio.QC.genome
 #seguimos con 9 duplicados, 6 de ellos con misma clave. En cuanto a los 3 con clave distinta, eliminamos el par excepto 115 y 384, mismo individuo.
 ##DEJAMOS PENDIENTE ELECCIÓN ENTRE ELIMINAR RL115 y RL_384. Dependerá de datos de secuenciación.
 cat <(awk '$10>0.9 {print $1,$2}' $estudio.QC.genome | grep -v 384) <(awk '$10>0.9 {print $3,$4}' $estudio.QC.genome | tail -n2) >> ~/analisis_asociacion/adultos_mega/listas/eliminacion_QC/conjunto_eliminar.txt
