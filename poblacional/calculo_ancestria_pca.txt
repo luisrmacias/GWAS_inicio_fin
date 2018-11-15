@@ -1,9 +1,10 @@
-admixture ancestrales_adultos_indep.bed 3
+admixture ancestrales.$proyecto.indep.bed 3
 
 ##se hace análisis de identidad alélica con estos SNP
-plink --bfile ancestrales_adultos_indep --genome --out ancestrales_adultos_indep
-plink --bfile ancestrales_adultos_indep --pca 10 header --out ancestrales_adultos_indep
-plink --bfile ancestrales_adultos_indep --read-genome ancestrales_adultos_indep.genome --cluster --mds-plot 4 --out ancestrales_adultos_indep
+plink --bfile ancestrales.$proyecto.indep --genome --out ancestrales.$proyecto.indep
+plink --bfile ancestrales.$proyecto.indep --pca 10 header --out ancestrales.$proyecto.indep
+plink --bfile ancestrales.$proyecto.indep --read-genome ancestrales.$proyecto.indep.genome --cluster --mds-plot 4 --out ancestrales.$proyecto.indep
 #################################################################################
-nano ancestrales_adultos_indep.3.Q
-cut -f 2-7 -d " " ancestrales_adultos_indep.eigenvec | paste - ancestrales_adultos_indep.3.Q | grep -e RL -e GEA -e MZ1 -e TER -e RED -e SOL -e CON -e ICN -e GC -e IID > componentes_ancestrias_adultos.txt
+##hay que hacer 'cajas_ancestria.R' primero para conocer las columnas
+nano ancestrales.$proyecto.indep.3.Q
+cut -f 2-7 -d " " ancestrales.$proyecto.indep.eigenvec | paste - ancestrales.$proyecto.indep.3.Q | grep -e RL -e GEA -e MZ1 -e TER -e RED -e SOL -e CON -e ICN -e GC -e IID > componentes_ancestrias.$proyecto.txt
