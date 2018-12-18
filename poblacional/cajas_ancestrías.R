@@ -9,7 +9,7 @@ names(ances)[1:2] <- c("FID", "IID")
 ids_ceu <- scan("~/CANDELA/haplotipos/ref_beagle/listas/grupos/fundadores_CEU.txt", what='list')
 ids_yri <- scan("~/CANDELA/haplotipos/ref_beagle/listas/grupos/fundadores_YRI.txt", what='list')
 indigenas <- grepl("FN|TOT|ZAP|NFM", ances$IID)
-summary(ances[ances$V2 %in% ids_ceu,3:5])
+summary(ances[ances$IID %in% ids_ceu,3:5])
 ##V1 CEU
 columna_CEU <- which(apply(ances[ances$IID %in% ids_ceu,3:5], 2, median)>0.95)
 summary(ances[ances$IID %in% ids_yri,3:5])
@@ -17,8 +17,8 @@ summary(ances[ances$IID %in% ids_yri,3:5])
 columna_YRI <- which(apply(ances[ances$IID %in% ids_yri,3:5], 2, median)>0.95)
 summary(ances[indigenas,3:5])
 ##V3 NAT
-summary(ances[!indigenas & !grepl("NA", ances$IID),3:5])
 columna_NAT <- which(apply(ances[indigenas,3:5], 2, median)>0.95)
+summary(ances[!indigenas & !grepl("NA", ances$IID),3:5])
 
 names(ances)[c(columna_NAT, columna_CEU, columna_YRI)+2] <- c("NAT", "CEU", "YRI")
 mestizos <- ances[!indigenas & !grepl("NA", ances$IID),]
