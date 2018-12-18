@@ -1,7 +1,7 @@
 admixture ancestrales.$proyecto.indep.bed 3
 
-##se hace an√°lisis de identidad al√©lica con estos SNP
-plink --bfile ancestrales.$proyecto.indep --genome --out ancestrales.$proyecto.indep
+##se hace an·lisis de identidad alÈlica con estos SNP
+plink --bfile ancestrales.$proyecto.indep --maf 0.02 --genome --out ancestrales.$proyecto.indep
 plink --bfile ancestrales.$proyecto.indep --pca 10 header --out ancestrales.$proyecto.indep
 plink --bfile ancestrales.$proyecto.indep --read-genome ancestrales.$proyecto.indep.genome --cluster --mds-plot 4 --out ancestrales.$proyecto.indep
 #################################################################################
