@@ -84,7 +84,7 @@ cut -f1,2 ../listas/eliminacion_QC/IBD_1.txt | cat - <(cut -f3,4 ../listas/elimi
 ##cat <(grep -eCTR -eH1 ../../listas/eliminacion_QC/IBD_1.txt | cut -f1-2) <(grep -eCTR -eH1 ../../listas/eliminacion_QC/IBD_1.txt | cut -f3-4) | sort -u >> ../../listas/eliminacion_QC/ind_dupli.txt
 
 ##tenemos lista de duplicados, sigue sexo discordante
-grep PROBLEM $proyecto.ideneli.sexcheck | awk '$3!=0 && $4!=0' | tr -s [:blank:] "\t" | sed -e 's/^[ \t]*//' | cut -f1,2 > ../../listas/eliminacion_QC/noconcuerdasexo_ids.txt
+grep PROBLEM $proyecto.ideneli.sexcheck | awk '$3!=0 && $4!=0' | tr -s [:blank:] "\t" | sed -e 's/^[ \t]*//' | cut -f1,2 > ../listas/eliminacion_QC/noconcuerdasexo_ids.txt
 ##agregamos identificadores de niña con mismas claves pero que no coincide manualmente
 cat > duplicados_perdidos.txt
 
