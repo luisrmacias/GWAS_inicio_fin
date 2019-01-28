@@ -32,5 +32,5 @@ pca <- pca[pca$pob!="",]
 jpeg('mds_porestadonutricio.jpg')
 	plot(pca$C1, pca$C2, col=c("turquoise", "orange","green","black","purple","brown")[pca$pob], pch=18, xlab="First multidimensional scaling component", ylab="Second multidimensional scaling component")
         ##title(main="Distribución de componentes principales de los individuos\ndel estudio con respecto a poblaciones ancestrales")
-        legend(-0.12, -0.03, levels(pca$pob), bg="white", col=c("turquoise", "orange","green","black","purple","brown"), pch=18, pt.cex=2, y.intersp=1.15)
+        legend(0.12, 0.06, levels(pca$pob), bg="white", col=c("turquoise", "orange","green","black","purple","brown"), pch=18, pt.cex=2, y.intersp=1.15)
 	dev.off()

@@ -18,7 +18,7 @@ plink --bfile $proyecto.ideneli --check-sex --out $proyecto.ideneli
 grep PROBLEM $proyecto.ideneli.sexcheck | awk '$3!=0'
 ##individuos con genotipificación baja se encuentran en $proyecto_ideneli.irem
 ##procedemos a selección de individuos duplicados
-awk '$10>0.6' $proyecto.ideneli.genome | tr -s [:blank:] "\t" | cut -f1 --complement | sort -grk10 | sed '1h;1d;$!H;$!d;G' > ../../listas/eliminacion_QC/IBD_1.txt
+awk '$10>0.6' $proyecto.ideneli.genome | tr -s [:blank:] "\t" | cut -f1 --complement | sort -grk10 | sed '1h;1d;$!H;$!d;G' > ../listas/eliminacion_QC/IBD_1.txt
  
 R
 rep <- read.table("../listas/eliminacion_QC/IBD_1.txt", header=TRUE)
@@ -80,7 +80,8 @@ grep RL ../../listas/eliminacion_QC/IBD_1.txt | grep -v RL111  | cut -f 1-4 > te
 nano temp.txt
 cat temp.txt >> ../../listas/eliminacion_QC/ind_dupli.txt
 rm temp.txt
-cat <(grep -eCTR -eH1 ../../listas/eliminacion_QC/IBD_1.txt | cut -f1-2) <(grep -eCTR -eH1 ../../listas/eliminacion_QC/IBD_1.txt | cut -f3-4) | sort -u >> ../../listas/eliminacion_QC/ind_dupli.txt
+cut -f1,2 ../listas/eliminacion_QC/IBD_1.txt | cat - <(cut -f3,4 ../listas/eliminacion_QC/IBD_1.txt) | sort -u > ../listas/eliminacion_QC/ind_dupli.txt
+##cat <(grep -eCTR -eH1 ../../listas/eliminacion_QC/IBD_1.txt | cut -f1-2) <(grep -eCTR -eH1 ../../listas/eliminacion_QC/IBD_1.txt | cut -f3-4) | sort -u >> ../../listas/eliminacion_QC/ind_dupli.txt
 
 ##tenemos lista de duplicados, sigue sexo discordante
 grep PROBLEM $proyecto.ideneli.sexcheck | awk '$3!=0 && $4!=0' | tr -s [:blank:] "\t" | sed -e 's/^[ \t]*//' | cut -f1,2 > ../../listas/eliminacion_QC/noconcuerdasexo_ids.txt
@@ -90,4 +91,4 @@ cat > duplicados_perdidos.txt
 
 cat $proyecto.ideneli.irem ../../listas/eliminacion_QC/ind_dupli.txt ../../listas/eliminacion_QC/noconcuerdasexo_ids.txt duplicados_perdidos.txt | grep -v FID > ../../listas/eliminacion_QC/conjunto_eliminar.txt
 
-plink --bfile $proyecto --remove ../../listas/eliminacion_QC/conjunto_eliminar.txt --make-bed --out $proyecto.filtroindd
+plink --bfile $proyecto --remove ../../listas/eliminacion_QC/conjunto_eliminar.txt --make-bed --out $proyecto.filtroind
