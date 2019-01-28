@@ -9,4 +9,4 @@ mv pcs* poblacional
 rm *[1-4]*
 
 ##borramos genotipos intermedios (iden_eli)
-rm *iden_eli*
+rm *ideneli*

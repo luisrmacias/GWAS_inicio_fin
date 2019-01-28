@@ -21,7 +21,7 @@ grep PROBLEM $proyecto.ideneli.sexcheck | awk '$3!=0'
 awk '$10>0.6' $proyecto.ideneli.genome | tr -s [:blank:] "\t" | cut -f1 --complement | sort -grk10 | sed '1h;1d;$!H;$!d;G' > ../../listas/eliminacion_QC/IBD_1.txt
  
 R
-rep <- read.table("../../listas/eliminacion_QC/IBD_1.txt", header=TRUE)
+rep <- read.table("../listas/eliminacion_QC/IBD_1.txt", header=TRUE)
 load("../../fenotipos/R_bin/seminario.RData")
 rep[which(rep$IID1 %in% longitud$clave_MA & rep$IID2 %in% longitud$clave_MA),]
 ##un par de individuos, el sexo y el estado nutricio coincide con el .fam. Apellidos distintos, quitamos NI_198 porque el otro coincide sexo genotípico
@@ -90,4 +90,4 @@ cat > duplicados_perdidos.txt
 
 cat $proyecto.ideneli.irem ../../listas/eliminacion_QC/ind_dupli.txt ../../listas/eliminacion_QC/noconcuerdasexo_ids.txt duplicados_perdidos.txt | grep -v FID > ../../listas/eliminacion_QC/conjunto_eliminar.txt
 
-plink --bfile $proyecto --remove ../../listas/eliminacion_QC/conjunto_eliminar.txt --make-bed --out $proyecto.filtroind
+plink --bfile $proyecto --remove ../../listas/eliminacion_QC/conjunto_eliminar.txt --make-bed --out $proyecto.filtroindd

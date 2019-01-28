@@ -1,4 +1,4 @@
-carpeta <- "ancestrales.niños.indep.mds"
+carpeta <- "ancestrales.PEMEX.indep.mds"
 pca <- read.table(carpeta, header=TRUE)
 ids_ceu <- scan("~/CANDELA/haplotipos/ref_beagle/listas/grupos/fundadores_CEU.txt", what='list')
 ids_yri <- scan("~/CANDELA/haplotipos/ref_beagle/listas/grupos/fundadores_YRI.txt", what='list')
