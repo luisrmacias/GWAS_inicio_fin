@@ -1,7 +1,7 @@
 cd /export/home/lmacias/analisis_asociacion/adultos_mega/cirugia_bar/imputados/fusionados
 estudio=fusion_noviembre2018
-lista_sexos=/export/home/lmacias/analisis_asociacion/niños/niños/listas/integrar_sexos_cero.txt
-plink --vcf $estudio.genoref.vcf.gz --const-fid --update-sex $lista_sexos --make-bed --out $estudio
+lista_sexos=/export/home/lmacias/analisis_asociacion/PEMEX
+plink --vcf $estudio.genoref.vcf.gz --const-fid --update-sex <(awk '{print 0,$2,$3}' $lista_sexos) --make-bed --out $estudio.imputado.fusionado
 
 ##agregamos fenotipo y sexo
 awk -i inplace '$2~/DCAC/ {$6=1} 1' $estudio.fam
@@ -26,7 +26,7 @@ fam[is.na(fam[,6]),6] <- c(2, 1, 2)
 write.table(fam, "fusion_noviembre2018.fam", col.names=FALSE, row.names=FALSE, quote=FALSE)
 
 cut -f2 -d " " $lista_sexos
-plink --bfile $estudio --geno 0.05 --make-bed --out $estudio.QC
+plink --bfile $estudio.imputado.fusionado --geno 0.05 --make-bed --out $estudio.QC
 plink --bfile $estudio.QC --freq --hardy --out $estudio.QC
 plink --bfile $estudio.QC --maf 0.025 --hwe 1e-5 --make-bed --out $estudio.QC
 ls *~
