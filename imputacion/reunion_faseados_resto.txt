@@ -6,7 +6,7 @@ bcftools concat -f fusion_filtrado.txt -Oz -o ~/analisis_asociacion/adultos_mega
 
 ##buscamos variantes no incluídas en referencia de 1000 genomas pero sí en microarreglo
 cd ~/analisis_asociacion/adultos_mega/cirugia_bar/imputados/fusionados
-base=~/analisis_asociacion/DCA/analisis_DCA/DCA.QC
+base=~/analisis_asociacion/$estudio/calidad/$estudio.QC
 plink --bfile $base --recode vcf-iid --geno 0.9999 --mac 5 --out $proyecto.sinfasear
 bgzip $estudio.sinfasear.vcf && tabix $estudio.sinfasear.vcf.gz
 bcftools query -f '%CHROM\t%POS\n' $estudio.vcf.gz > enfusion_posfaseo.txt
