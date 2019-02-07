@@ -11,11 +11,12 @@ awk '{print $1, $2, 0, $2}' $carpeta/$proyecto.$pob.fam > temp.txt
 plink --bfile $carpeta/$proyecto.$pob --update-ids temp.txt --make-bed --out $carpeta/$proyecto.$pob
 plink --bfile $carpeta/$proyecto.$pob --update-sex listas/integrar_sexos_cero.txt --make-bed --out $carpeta/$proyecto.$pob
 ##agregamos estado de caso y control
-awk -i inplace '$2~/GC/ || $2~/ICN/ {$6=1} 1' $carpeta/adultos.$pob.fam
-awk -i inplace '$2~/SOL/ || $2~/RED/ || $2~/CON/ || $2~/TER/ || $2~/MZ1/ {$6=2} 1' $carpeta/adultos.$pob.fam
+awk -i inplace '$2~/GC/ || $2~/ICN/ {$6=1} 1' $carpeta/$proyecto.$pob.fam
+awk -i inplace '$2~/SOL/ || $2~/RED/ || $2~/CON/ || $2~/TER/ || $2~/MZ1/ {$6=2} 1' $carpeta/$proyecto.$pob.fam
 done
 rm $carpeta/*~
 rm temp.txt
+
 awk '{print 0, $2, $6}' imputados/fusionados/fusion.fam > temp.txt
 R
 archivos <- list.files(path="calidad/cluster3", pattern="*.fam", full.names=TRUE)
