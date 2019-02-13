@@ -1,14 +1,25 @@
 
 cd ~/CANDELA/haplotipos/solo_pob/referencias_mosaico
-##venimos de grupos_hgdp.R
-proyecto=hgdp
+
+##los archivos se tienen que llamar igual que las carpetas
+proyecto=Behar_2010
 mkdir faseo/$proyecto
+mv fuentes/$proyecto/*.bed fuentes/$proyecto/$proyecto.bed
+mv fuentes/$proyecto/*.bim fuentes/$proyecto/$proyecto.bim
+mv fuentes/$proyecto/*.fam fuentes/$proyecto/$proyecto.fam
+
+##para hgdp era alto el número de variantes eliminadas por desequilibrio de Hardy Weinberg (>10%) por los que calculamos EHW por población, para ello creamos archivos por grupos en 'grupos_hgdp.R'
 plink --bfile fuentes/$proyecto/$proyecto --hardy --keep <(awk '$3==2' listas/grupos_hgdp.txt) --out faseo/$proyecto.2
+
 awk '$9<1e-5 && $1<23' faseo/hgdp.1.hwe > listas/hgdp_nohwe.txt
 awk '$9<1e-5 && $1<23' faseo/hgdp.2.hwe >> listas/hgdp_nohwe.txt
 
 plink --bfile fuentes/$proyecto/$proyecto --exclude listas/hgdp_nohwe.txt --maf 0.01 --make-bed --out faseo/$proyecto/$proyecto.QC
 
+##en el caso de INMEGEN_mestizos el filtro directo funcionó o ya estaba filtrado
+plink --bfile fuentes/$proyecto/$proyecto --hwe 1e-5 --maf 0.01 --make-bed --out faseo/$proyecto/$proyecto.QC
+
+###esta parte es solo cuando tienes fenotipos
 plink --bfile $proyecto.QC --assoc --pfilter 0.1 --out prueba
 sort -gk9 prueba.assoc
 ##se ve creíble

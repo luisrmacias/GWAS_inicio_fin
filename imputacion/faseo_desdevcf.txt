@@ -1,8 +1,9 @@
 ##venimos de guión conversión vcf en el que se establece carpeta de trabajo
 ##cd ~/analisis_asociacion/adultos_mega/calidad/cluster3
-cd imputacion
 proyecto=hgdp
 mkdir faseados
+
+cd imputacion
 mkdir faseados/$proyecto
 car_referencias=~/CANDELA/haplotipos/referencias_faseo_ancestria/universales_indigenas
 
