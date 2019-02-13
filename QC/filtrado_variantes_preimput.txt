@@ -2,7 +2,7 @@
 cd ~/CANDELA/haplotipos/solo_pob/referencias_mosaico
 
 ##los archivos se tienen que llamar igual que las carpetas
-proyecto=Behar_2010
+proyecto=NatComm_2017
 mkdir faseo/$proyecto
 mv fuentes/$proyecto/*.bed fuentes/$proyecto/$proyecto.bed
 mv fuentes/$proyecto/*.bim fuentes/$proyecto/$proyecto.bim
