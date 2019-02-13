@@ -1,19 +1,29 @@
 ##venimos de guión conversión vcf en el que se establece carpeta de trabajo
 ##cd ~/analisis_asociacion/adultos_mega/calidad/cluster3
 cd imputacion
+proyecto=hgdp
 mkdir faseados
-car_referencias=~/CANDELA/haplotipos/indigenas/MEGA/universales_indigenas
-proyecto=niños
-for chr in {1..22}
+mkdir faseados/$proyecto
+car_referencias=~/CANDELA/haplotipos/referencias_faseo_ancestria/universales_indigenas
+
+for chr in {1..21}
 do
 java -jar ~/scripts/beagleyut/bref3.03Jul18.40b.jar $car_referencias/nat_uni_extendido.$chr.vcf.gz > ref.$chr.bref3
-bcftools query -f '%CHROM\t%POS\t%REF\t%ALT\n' vcf/$proyecto.$chr.vcf | grep -vw -e A -e C -e T -e G | cut -f 1,2 > temp.txt
-bcftools query -f '%CHROM\t%POS\t%REF\t%ALT\n' vcf/$proyecto.$chr.vcf | grep "-" | cut -f1,2 >> temp.txt
-bcftools view -T ^temp.txt vcf/$proyecto.$chr.vcf -Oz -o temp.vcf.gz
+bcftools query -f '%CHROM\t%POS\t%REF\t%ALT\n' vcf/$proyecto/$proyecto.$chr.vcf | grep -vw -e A -e C -e T -e G | cut -f 1,2 > temp.txt
+bcftools query -f '%CHROM\t%POS\t%REF\t%ALT\n' vcf/$proyecto/$proyecto.$chr.vcf | grep "-" | cut -f1,2 >> temp.txt
+quitar="$(wc -m temp.txt | cut -f1 -d " ")"
+if [ $quitar -gt 0 ]
+then
+bcftools view -T ^temp.txt vcf/$proyecto/$proyecto.$chr.vcf -Oz -o temp.vcf.gz
 java -jar ~/scripts/beagleyut/conform-gt.24May16.cee.jar ref=$car_referencias/nat_uni_extendido.$chr.vcf.gz gt=temp.vcf.gz chrom=$chr match=ID out=mod.$proyecto.$chr
-cd faseados
-java -jar ~/scripts/beagleyut/beagle.15Sep18.8a0.jar ref=../ref.$chr.bref3 gt=../mod.$proyecto.$chr.vcf.gz map=~/CANDELA/haplotipos/ref_beagle/listas/mapa_beagle/plink.chr$chr.GRCh37.map iterations=5 nthreads=22 window=40 overlap=8 out=$proyecto.chr$chr
-cd ..
+fi
+if [ $quitar -eq 0 ]
+then
+java -jar ~/scripts/beagleyut/conform-gt.24May16.cee.jar ref=$car_referencias/nat_uni_extendido.$chr.vcf.gz gt=vcf/$proyecto/$proyecto.$chr.vcf chrom=$chr match=ID out=mod.$proyecto.$chr
+fi
+cd faseados/$proyecto
+java -jar ~/scripts/beagleyut/beagle.15Sep18.8a0.jar ref=../../ref.$chr.bref3 gt=../../mod.$proyecto.$chr.vcf.gz map=~/CANDELA/haplotipos/listas/mapa_beagle/plink.chr$chr.GRCh37.map iterations=5 nthreads=22 window=40 overlap=8 out=$proyecto.chr$chr
+cd ../..
 rm *.*
 done
 

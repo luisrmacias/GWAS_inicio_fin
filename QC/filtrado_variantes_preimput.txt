@@ -1,5 +1,13 @@
-cd ~/lmacias/analisis_asociacion/adultos_mega/calidad/cluster3
-plink --bfile $proyecto.filtroind --hwe 1e-5 --maf 0.05 --make-bed --out $proyecto.QC
+
+cd ~/CANDELA/haplotipos/solo_pob/referencias_mosaico
+##venimos de grupos_hgdp.R
+proyecto=hgdp
+mkdir faseo/$proyecto
+plink --bfile fuentes/$proyecto/$proyecto --hardy --keep <(awk '$3==2' listas/grupos_hgdp.txt) --out faseo/$proyecto.2
+awk '$9<1e-5 && $1<23' faseo/hgdp.1.hwe > listas/hgdp_nohwe.txt
+awk '$9<1e-5 && $1<23' faseo/hgdp.2.hwe >> listas/hgdp_nohwe.txt
+
+plink --bfile fuentes/$proyecto/$proyecto --exclude listas/hgdp_nohwe.txt --maf 0.01 --make-bed --out faseo/$proyecto/$proyecto.QC
 
 plink --bfile $proyecto.QC --assoc --pfilter 0.1 --out prueba
 sort -gk9 prueba.assoc

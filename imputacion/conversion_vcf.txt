@@ -1,14 +1,15 @@
-cd ~/analisis_asociacion/DCA/analisis_DCA
+cd ~/CANDELA/haplotipos/solo_pob/referencias_mosaico
+proyecto=hgdp
 mkdir imputacion
 mkdir imputacion/vcf
-proyecto=niños
-grep -c -e RL -e GEA -e ICN -e GC -e MZ1 -e RED -e TER -e CON -e SOL $base.fam
+mkdir imputacion/vcf/$proyecto
+##grep -c -e RL -e GEA -e ICN -e GC -e MZ1 -e RED -e TER -e CON -e SOL $base.fam
 for chr in {1..22}
 do
-	plink --bfile $proyecto.QC --chr $chr --recode vcf-iid --geno 0.9999 --mac 5 --out imputacion/vcf/$proyecto.$chr
+	plink --bfile faseo/$proyecto/$proyecto.QC --chr $chr --recode vcf-iid --geno 0.9999 --mac 5 --out imputacion/vcf/$proyecto/$proyecto.$chr
 done
-grep -r Warning imputacion/vcf/ | less
-grep -r removed imputacion/vcf/ | less
-rm imputacion/vcf/*.log
-rm imputacion/vcf/*.nosex
+grep -r Warning imputacion/vcf/$proyecto | less
+grep -r removed imputacion/vcf/$proyecto | less
+rm imputacion/vcf/$proyecto/*.log
+rm imputacion/vcf/$proyecto/*.nosex
 
