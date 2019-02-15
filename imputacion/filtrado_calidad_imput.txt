@@ -8,3 +8,18 @@ do
         bcftools view -i 'AF<0.01 || DR2>=0.8' $proyecto.chr$chr.vcf.gz -Oz -o filtrado.$proyecto.$chr.vcf.gz && tabix -f filtrado.$proyecto.$chr.vcf.gz
 done
 
+##en grupo
+cd /export/home/lmacias/CANDELA/haplotipos/solo_pob/referencias_mosaico/imputacion/faseados
+estudios="$(ls)"
+for i in $estudios
+do
+proyecto=$i
+for chr in {1..22}
+do
+        tabix $proyecto/$proyecto.chr$chr.vcf.gz
+        bcftools view -i 'AF<0.01 || DR2>=0.8' $proyecto/$proyecto.chr$chr.vcf.gz -Oz -o $proyecto/filtrado.$proyecto.$chr.vcf.gz && tabix -f $proyecto/filtrado.$proyecto.$chr.vcf.gz
+done
+ls -v $proyecto/filtrado.*.vcf.gz > fusion.$proyecto.tmp
+bcftools concat -f fusion.$proyecto.tmp -Oz -o $proyecto/$proyecto.vcf.gz
+rm fusion.$proyecto.tmp
+done
