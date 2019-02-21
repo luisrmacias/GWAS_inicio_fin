@@ -1,8 +1,12 @@
 ##hacemos filtrado preliminar por frecuencia y Hardy-Weinberg (tasa de genotipificación se filtró en paso anterior)
-cd ~/analisis_asociacion/$proyecto_mega/calidad/cluster3
-proyecto=niños
+cd /export/home/lmacias/CANDELA/haplotipos/solo_pob/mosaico
+mkdir calidad
+proyecto=Mosaico_4
+plink --bfile $proyecto --geno 0.05 --make-bed --out calidad/$proyecto
+cd calidad
 plink --bfile $proyecto --freq --missing --hardy --out $proyecto
-plink --bfile $proyecto --maf 0.025 --hwe 1e-35 --make-bed --out $proyecto.ideneli
+plink --bfile $proyecto --freq --missing --hardy --out $proyecto
+plink --bfile $proyecto --maf 0.025 --hwe 1e-15 --make-bed --out $proyecto.ideneli
 mv $proyecto.ideneli.log filtro_frecuencia_hardy.log
 plink --bfile $proyecto.ideneli --missing --out $proyecto.ideneli
 plink --bfile $proyecto.ideneli --mind 0.05 --make-bed --out $proyecto.ideneli
