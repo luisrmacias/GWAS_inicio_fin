@@ -1,8 +1,8 @@
 ##hacemos filtrado preliminar por frecuencia y Hardy-Weinberg (tasa de genotipificación se filtró en paso anterior)
 cd /export/home/lmacias/CANDELA/haplotipos/solo_pob/mosaico
 mkdir calidad
-proyecto=Mosaico_4
-plink --bfile $proyecto --geno 0.05 --make-bed --out calidad/$proyecto
+proyecto=primer_paso
+##plink --bfile $proyecto --geno 0.05 --make-bed --out calidad/$proyecto
 cd calidad
 plink --bfile $proyecto --freq --missing --hardy --out $proyecto
 plink --bfile $proyecto --freq --missing --hardy --out $proyecto

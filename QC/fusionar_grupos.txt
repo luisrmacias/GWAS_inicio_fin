@@ -1,7 +1,7 @@
 cd calidad/cluster3
 proyecto=niños
 ##buscaremos marcadores en la misma posición con identificadores distintos para cambiar a rs
-grep -v "\brs" $proyecto.2.bim | cut -f1,4 | xargs -Ihello grep -w hello <(cut -f1,4 $proyecto.1.bim)
+grep -v "\brs" $proyecto.2.bim | cut -f1,4 | xargs -Ihello grep -w hello <(cut -f1-4 $proyecto.1.bim)
 ##Solo hay un snp sin rs en el segundo grupo que está entre los del primero. En el primero tampoco tiene rs.
 grep -v "\brs" $proyecto.3.bim | cut -f1,4 | xargs -Ihello grep -w hello <(cut -f1,4 $proyecto.1.bim)
 ##En el tercer grupo no hay ningún snp sin rs que esté en el primero
@@ -19,7 +19,7 @@ for (i in 1:26)
 cambiar <- cambiar[complete.cases(cambiar),]
 write.table(cambiar, "~/analisis_asociacion/niños/niños/listas/eliminacion_QC/cambio_ids_niños.1.txt", row.names=FALSE, quote=FALSE)
 
-cut -f2 niños.1.bim | sort | uniq -d > temp.txt
+cut -f2 $proyecto.1.bim | sort | uniq -d > temp.txt
 plink --bfile $proyecto.1 --exclude temp.txt --make-bed --out $proyecto.1
 plink --bfile $proyecto.1 --update-name ~/analisis_asociacion/niños/niños/listas/eliminacion_QC/cambio_ids_niños.1.txt --make-bed --out $proyecto.1
 plink --bfile $proyecto.1 --bmerge $proyecto.2 --allow-no-sex --make-bed --out primer_paso
