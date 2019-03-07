@@ -23,3 +23,12 @@ ls -v $proyecto/filtrado.*.vcf.gz > fusion.$proyecto.tmp
 bcftools concat -f fusion.$proyecto.tmp -Oz -o $proyecto/$proyecto.vcf.gz
 rm fusion.$proyecto.tmp
 done
+
+##reunion de faseados distintos proyectos para ancestría local (sin SNP no faseados)
+##creamos carpeta genotipos en ~/CANDELA/haplotipos/ancestria_local/$proyecto
+
+for chr in {1..21}
+do
+bcftools isec -n=2 -w1 primer_paso/filtrado.primer_paso.$chr.vcf.gz NMO.3/filtrado.NMO.3.$chr.vcf.gz -T ~/CANDELA/haplotipos/listas/SNPS/info_ances/posiciones$chr.list -Ov | java -jar ~/scripts/beagleyut/vcf2beagle.jar ? ~/CANDELA/haplotipos/ancestria_local/$proyecto/genotipos/$proyecto.chr$chr
+done
+
