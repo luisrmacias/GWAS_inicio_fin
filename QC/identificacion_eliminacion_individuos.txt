@@ -5,7 +5,6 @@ proyecto=primer_paso
 ##plink --bfile $proyecto --geno 0.05 --make-bed --out calidad/$proyecto
 cd calidad
 plink --bfile $proyecto --freq --missing --hardy --out $proyecto
-plink --bfile $proyecto --freq --missing --hardy --out $proyecto
 plink --bfile $proyecto --maf 0.025 --hwe 1e-15 --make-bed --out $proyecto.ideneli
 mv $proyecto.ideneli.log filtro_frecuencia_hardy.log
 plink --bfile $proyecto.ideneli --missing --out $proyecto.ideneli
@@ -13,8 +12,8 @@ plink --bfile $proyecto.ideneli --mind 0.05 --make-bed --out $proyecto.ideneli
 plink --bfile $proyecto.ideneli --genome --out $proyecto.ideneli
 awk '$10>0.6' $proyecto.ideneli.genome | sort -grk 10 | grep -e CON -e CTR | less
 ##controles internos coinciden, RL111 idéntico a controles internos
-awk '$10<0.6 && $10>0.2' $proyecto.ideneli.genome | wc
-##73 pares de parientes en primer o segundo grado
+awk '$10<0.6 && $10>0.2' $proyecto.ideneli.genome | grep -v \\bCH | wc
+##404 pares de parientes en primer o segundo grado (sin CH)
 ##búsqueda de individuos con mismo identificador y que no coincidan
 awk '$2==$4 && $9<0.9' $proyecto.ideneli.genome
 
@@ -22,7 +21,7 @@ plink --bfile $proyecto.ideneli --check-sex --out $proyecto.ideneli
 grep PROBLEM $proyecto.ideneli.sexcheck | awk '$3!=0'
 ##individuos con genotipificación baja se encuentran en $proyecto_ideneli.irem
 ##procedemos a selección de individuos duplicados
-awk '$10>0.6' $proyecto.ideneli.genome | tr -s [:blank:] "\t" | cut -f1 --complement | sort -grk10 | sed '1h;1d;$!H;$!d;G' > ../listas/eliminacion_QC/IBD_1.txt
+awk '$10>0.6' $proyecto.ideneli.genome | tr -s [:blank:] "\t" | cut -f1 --complement | sort -grk10 | sed '1h;1d;$!H;$!d;G' > ../../listas/eliminacion_QC/IBD_1.txt
  
 R
 rep <- read.table("../listas/eliminacion_QC/IBD_1.txt", header=TRUE)
@@ -69,8 +68,8 @@ q()
 grep -v CTR ../../listas/eliminacion_QC/IBD_1.txt 
 ##los controles coinciden entre sí
 grep RL ../../listas/eliminacion_QC/IBD_1.txt
-cut -f2 ../../listas/eliminacion_QC/IBD_1.txt | grep RL | grep -f - ~/analisis_asociacion/$proyecto_mega/cirugia_bar/fenotipos/para_asoc/porciento_excesoIMCperdido.phen
-cut -f4 ../../listas/eliminacion_QC/IBD_1.txt | grep RL | grep -f - ~/analisis_asociacion/$proyecto_mega/cirugia_bar/fenotipos/para_asoc/porciento_excesoIMCperdido.phen
+cut -f2 ../../listas/eliminacion_QC/IBD_1.txt | grep RL | grep -f - ~/analisis_asociacion/adultos_mega/cirugia_bar/fenotipos/para_asoc/porciento_excesoIMCperdido.phen
+cut -f4 ../../listas/eliminacion_QC/IBD_1.txt | grep RL | grep -f - ~/analisis_asociacion/adultos_mega/cirugia_bar/fenotipos/para_asoc/porciento_excesoIMCperdido.phen
 ##RL_112 se elimina por encima de RL013 porque este último tiene seguimiento
 ##RL115 se elimina por encima de RL_384 porque este último tiene doble genotipificación
 ##Se elimina RL281
@@ -85,7 +84,7 @@ nano temp.txt
 cat temp.txt >> ../../listas/eliminacion_QC/ind_dupli.txt
 rm temp.txt
 cut -f1,2 ../listas/eliminacion_QC/IBD_1.txt | cat - <(cut -f3,4 ../listas/eliminacion_QC/IBD_1.txt) | sort -u > ../listas/eliminacion_QC/ind_dupli.txt
-##cat <(grep -eCTR -eH1 ../../listas/eliminacion_QC/IBD_1.txt | cut -f1-2) <(grep -eCTR -eH1 ../../listas/eliminacion_QC/IBD_1.txt | cut -f3-4) | sort -u >> ../../listas/eliminacion_QC/ind_dupli.txt
+cat <(grep -eCTR -eH1 ../../listas/eliminacion_QC/IBD_1.txt | cut -f1-2) <(grep -eCTR -eH1 ../../listas/eliminacion_QC/IBD_1.txt | cut -f3-4) | sort -u >> ../../listas/eliminacion_QC/ind_dupli.txt
 
 ##tenemos lista de duplicados, sigue sexo discordante
 grep PROBLEM $proyecto.ideneli.sexcheck | awk '$3!=0 && $4!=0' | tr -s [:blank:] "\t" | sed -e 's/^[ \t]*//' | cut -f1,2 > ../listas/eliminacion_QC/noconcuerdasexo_ids.txt

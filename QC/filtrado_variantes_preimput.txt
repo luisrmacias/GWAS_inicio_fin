@@ -22,6 +22,6 @@ plink --bfile fuentes/$proyecto/$proyecto --hwe 1e-5 --maf 0.01 --make-bed --out
 ###esta parte es solo cuando tienes fenotipos
 plink --bfile $proyecto.QC --assoc --pfilter 0.1 --out prueba
 sort -gk9 prueba.assoc
-##se ve creíble
+##se ve poco creíble
 
 rm prueba*
