@@ -23,4 +23,4 @@ bcftools query -f '%CHROM\t%POS\n' $proyecto/$proyecto.genoref.vcf.gz | wc
 bcftools query -f '%CHROM\t%POS\n' $proyecto/$proyecto.genoref.vcf.gz | sort | uniq -d
 ##por fin
 rm genotipados_noref.vcf.gz genotipados_noref.vcf.gz.tbi
-mv fusion_agosto2018.vcf* ~/analisis_asociacion/adultos_mega/calidad/cluster3/imputacion
+mv $proyecto.vcf* ~/analisis_asociacion/adultos_mega/calidad/cluster3/imputacion/
