@@ -2,7 +2,7 @@
 cd ~/analisis_asociacion/adultos_mega/ancestria/cluster3/poblacional
 proyecto=niños
 referencias=~/CANDELA/haplotipos/referencias_faseo_ancestria/ancestrales_mestizos/plink
-mestizos=~/analisis_asociacion/adultos_mega/cirugia_bar/imputados/fusionados/$proyecto.QC
+mestizos=~/analisis_asociacion/adultos_mega/calidad/cluster3/adultos.032018.filtroind
 plink --bfile $mestizos --bmerge $referencias/ancestrales --allow-no-sex --make-bed --out ancestrales.$proyecto
 plink --bfile ancestrales.$proyecto --geno 0.1 --hwe 1e-10 --make-bed --out ancestrales.$proyecto
 plink --bfile ancestrales.$proyecto --indep 50 5 2 --out ancestrales.$proyecto
