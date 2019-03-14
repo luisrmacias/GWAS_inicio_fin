@@ -1,7 +1,8 @@
 proyecto=niños
-cd faseados
+cd faseados/$proyecto
 chr=22
 bcftools view -i 'DR2>=0.8' -f '%CHROM\t%POS\n' $proyecto.chr$chr.vcf.gz | grep IMP | cut -f8 | cut -f1 -d ";" | wc
+
 for chr in {1..22}
 do
         tabix $proyecto.chr$chr.vcf.gz
