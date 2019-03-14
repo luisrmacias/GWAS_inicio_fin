@@ -1,7 +1,7 @@
 
 cd ~/analisis_asociacion/adultos_mega/ancestria/cluster3/poblacional
 proyecto=niños
-referencias=~/CANDELA/haplotipos/indigenas/MEGA/ancestrales_mestizos/plink/ancestrales
+referencias=~/CANDELA/haplotipos/referencias_faseo_ancestria/ancestrales_mestizos/plink
 mestizos=~/analisis_asociacion/niños/niños/imputados/fusionados/fusion_noviembre.QC
 plink --bfile $mestizos --bmerge $referencias --allow-no-sex --make-bed --out ancestrales.$proyecto
 plink --bfile ancestrales.$proyecto --geno 0.1 --hwe 1e-10 --make-bed --out ancestrales.$proyecto
