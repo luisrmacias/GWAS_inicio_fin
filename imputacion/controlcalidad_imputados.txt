@@ -1,11 +1,15 @@
 cd /export/home/lmacias/analisis_asociacion/adultos_mega/cirugia_bar/imputados/fusionados
 estudio=fusion_noviembre2018
 lista_sexos=/export/home/lmacias/analisis_asociacion/PEMEX
-plink --vcf $proyecto/$proyecto.genoref.vcf.gz --const-fid --update-sex <(awk '{print 0,$2,$3}' $lista_sexos) --make-bed --out $proyecto/$proyecto.imputado.fusionado
+plink --vcf $proyecto.genoref.vcf.gz --const-fid --update-sex <(awk '{print 0,$2,$3}' $base.fam) --make-bed --out $proyecto
 
 ##agregamos fenotipo y sexo
 awk -i inplace '$2~/DCAC/ {$6=1} 1' $proyecto/$proyecto.fam
 awk -i inplace '$2~/DCA/ {$6=2} 1' $proyecto/$proyecto.fam
+
+awk -i inplace '$2~/GC/ || $2~/ICN/ {$6=1} 1' $proyecto.fam
+awk -i inplace '$2~/SOL/ || $2~/RED/ || $2~/CON/ || $2~/TER/ || $2~/MZ1/ {$6=2} 1' $proyecto.fam
+
 
 ##en los niños
 awk '{print 0, $2, $6}' imputados/fusionados/fusion.fam > temp.txt
