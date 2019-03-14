@@ -1,7 +1,7 @@
 carpeta <- "ancestrales.PEMEX.indep.mds"
 pca <- read.table(carpeta, header=TRUE)
-ids_ceu <- scan("~/CANDELA/haplotipos/ref_beagle/listas/grupos/fundadores_CEU.txt", what='list')
-ids_yri <- scan("~/CANDELA/haplotipos/ref_beagle/listas/grupos/fundadores_YRI.txt", what='list')
+ids_ceu <- scan("~/CANDELA/haplotipos/listas/grupos/fundadores_CEU.txt", what='list')
+ids_yri <- scan("~/CANDELA/haplotipos/listas/grupos/fundadores_YRI.txt", what='list')
 por_centro <- read.table("../grupo_asig.txt")
 europeos <- na.omit(pmatch(ids_ceu, pca$IID))
 yoruba <- na.omit(pmatch(ids_yri, pca$IID))
