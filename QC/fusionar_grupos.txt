@@ -1,8 +1,8 @@
 cd $carpeta
 proyecto=niños
 ##buscaremos marcadores en la misma posición con identificadores distintos para cambiar a rs
-grep -v "\brs" $proyecto.2.bim | cut -f1,4 | xargs -Ihello grep -w hello <(cut -f1-4 $proyecto.1.bim)
 ##Solo hay un snp sin rs en el segundo grupo que está entre los del primero. En el primero tampoco tiene rs.
+grep -v "\brs" $proyecto.2.bim | cut -f1,4 | xargs -Ihello grep -w hello <(cut -f1-4 $proyecto.1.bim)
 grep -v "\brs" $proyecto.3.bim | cut -f1,4 | xargs -Ihello grep -w hello <(cut -f1,4 $proyecto.1.bim)
 ##En el tercer grupo no hay ningún snp sin rs que esté en el primero
 grep -v "\brs" $proyecto.1.bim | cut -f1,4 | xargs -Ihello grep -nw hello <(cut -f1,4 $proyecto.2.bim)
@@ -30,7 +30,7 @@ plink --bfile primer_paso --bmerge $proyecto.3 --allow-no-sex --make-bed --out $
 plink --bfile $proyecto.3 --flip $proyecto-merge.missnp --allow-no-sex --make-bed --out $proyecto.3
 plink --bfile primer_paso --bmerge $proyecto.3 --allow-no-sex --make-bed --out $proyecto
 
-plink --bfile $proyecto --bmerge $proyecto.4 --allow-no-sex --make-bed --out segundo_paso
+plink --bfile $proyecto --bmerge $proyecto.4 --allow-no-sex --make-bed --out $proyecto
 plink --bfile $proyecto.4 --flip segundo_paso-merge.missnp --allow-no-sex --make-bed --out $proyecto.4
 plink --bfile $proyecto --bmerge $proyecto.4 --allow-no-sex --make-bed --out segundo_paso
 
