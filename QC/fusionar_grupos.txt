@@ -1,4 +1,4 @@
-cd calidad/cluster3
+cd $carpeta
 proyecto=niños
 ##buscaremos marcadores en la misma posición con identificadores distintos para cambiar a rs
 grep -v "\brs" $proyecto.2.bim | cut -f1,4 | xargs -Ihello grep -w hello <(cut -f1-4 $proyecto.1.bim)
@@ -27,8 +27,16 @@ plink --bfile $proyecto.1 --exclude primer_paso-merge.missnp --allow-no-sex --ma
 plink --bfile $proyecto.1 --bmerge $proyecto.2 --allow-no-sex --make-bed --out primer_paso
 
 plink --bfile primer_paso --bmerge $proyecto.3 --allow-no-sex --make-bed --out $proyecto
-plink --bfile $proyecto.3 --exclude $proyecto-merge.missnp --allow-no-sex --make-bed --out $proyecto.3
+plink --bfile $proyecto.3 --flip $proyecto-merge.missnp --allow-no-sex --make-bed --out $proyecto.3
 plink --bfile primer_paso --bmerge $proyecto.3 --allow-no-sex --make-bed --out $proyecto
+
+plink --bfile $proyecto --bmerge $proyecto.4 --allow-no-sex --make-bed --out segundo_paso
+plink --bfile $proyecto.4 --flip segundo_paso-merge.missnp --allow-no-sex --make-bed --out $proyecto.4
+plink --bfile $proyecto --bmerge $proyecto.4 --allow-no-sex --make-bed --out segundo_paso
+
 rm primer_paso*
 plink --bfile $proyecto --geno 0.05 --make-bed --out $proyecto
 rm *~
+
+
+plink --bfile $proyecto.3 --list-duplicate-vars ids-only suppress-first --make-bed --out $proyecto.3

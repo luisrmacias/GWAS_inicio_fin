@@ -15,8 +15,7 @@ plink --bfile $genos --list-duplicate-vars ids-only suppress-first --make-bed --
 plink --bfile $carpeta/$proyecto.$COUNTER --exclude $carpeta/$proyecto.$COUNTER.dupvar --make-bed --out $carpeta/$proyecto.$COUNTER
 echo $COUNTER > $TEMPFILE
 Rscript ~/repos/gwas_inicio_fin/preparacion/sitios_dup_bim.R $carpeta/$proyecto.$COUNTER.bim
-paste ~/analisis_asociacion/$proyecto/listas/eliminacion_QC/SNP_duplicados.list <(awk '$1=$1".dup"' ~/analisis_asociacion/adultos_mega/listas/eliminacion_QC/SNP_duplicados.list) > temp.txt
-mv temp.txt listas/eliminacion_QC/SNP_duplicados.list
+awk -i inplace '{print $1, $2=$1".dup"}' ~/analisis_asociacion/$proyecto/listas/eliminacion_QC/SNP_duplicados.list 
 plink --bfile $carpeta/$proyecto.$COUNTER --update-name listas/eliminacion_QC/SNP_duplicados.list --make-bed --out $carpeta/$proyecto.$COUNTER
 plink --bfile $carpeta/$proyecto.$COUNTER --exclude <(cut -f2 listas/eliminacion_QC/SNP_duplicados.list) --make-bed --out $carpeta/$proyecto.$COUNTER
 ##cambiamos los nombres
@@ -34,3 +33,4 @@ do
 plink --bfile $carpeta/$proyecto.$pob --exclude temp.txt --make-bed --out $carpeta/$proyecto.$pob
 done
 rm $carpeta/*~
+
