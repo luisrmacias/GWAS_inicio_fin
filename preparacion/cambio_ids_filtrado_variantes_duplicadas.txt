@@ -1,9 +1,9 @@
 ##se crean archivos binarios
 cd ~/analisis_asociacion/adultos_mega/
-carpeta=calidad
-genotipos="$(ls fuentes/*.bim | sed 's/.\{4\}$//' | sort -u)"
+carpeta=calidad/5_fases
+genotipos="$(find fuentes/ | grep .bim | sed 's/.\{4\}$//')"
 
-proyecto=NMO
+proyecto=cardio
 
 TEMPFILE=/tmp/$$.tmp
 echo 0 > $TEMPFILE
