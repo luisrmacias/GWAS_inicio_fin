@@ -22,17 +22,20 @@ write.table(cambiar, "~/analisis_asociacion/niños/niños/listas/eliminacion_QC/
 cut -f2 $proyecto.1.bim | sort | uniq -d > temp.txt
 plink --bfile $proyecto.1 --exclude temp.txt --make-bed --out $proyecto.1
 plink --bfile $proyecto.1 --update-name ~/analisis_asociacion/niños/niños/listas/eliminacion_QC/cambio_ids_niños.1.txt --make-bed --out $proyecto.1
-plink --bfile $proyecto.1 --bmerge $proyecto.2 --allow-no-sex --make-bed --out primer_paso
+plink --bfile $proyecto.3 --bmerge $proyecto.5 --allow-no-sex --make-bed --out primer_paso
 ##nos pasamos a guión listado por posición para hacer archivo con posiciones de SNP duplicados
-##plink --bfile $proyecto.1 --flip primer_paso-merge.missnp --allow-no-sex --make-bed --out $proyecto.1
+##plink --bfile cardio.1 --exclude range snp_duplicados_difpos.txt --make-bed --out cardio.1 
+##plink --bfile $proyecto.5 --flip primer_paso-merge.missnp --allow-no-sex --make-bed --out $proyecto.5
+
 plink --bfile $proyecto.1 --exclude primer_paso-merge.missnp --allow-no-sex --make-bed --out $proyecto.1
 plink --bfile $proyecto.1 --bmerge $proyecto.2 --allow-no-sex --make-bed --out primer_paso
 
-plink --bfile primer_paso --bmerge $proyecto.3 --allow-no-sex --make-bed --out segundo_paso
-plink --bfile $proyecto.3 --flip segundo_paso-merge.missnp --allow-no-sex --make-bed --out $proyecto.3
+plink --bfile primer_paso --bmerge $proyecto.4 --allow-no-sex --make-bed --out segundo_paso
+##las variantes monomórficas de los pasos anteriores aparecen como no coincidentes
+plink --bfile $proyecto.4 --flip segundo_paso-merge.missnp --allow-no-sex --make-bed --out $proyecto.4
 plink --bfile primer_paso --bmerge $proyecto.3 --allow-no-sex --make-bed --out segundo_paso
 
-plink --bfile segundo_paso --bmerge $proyecto.4 --allow-no-sex --make-bed --out tercer_paso
+plink --bfile segundo_paso --bmerge $proyecto.2 --allow-no-sex --make-bed --out tercer_paso
 ##hay 96 275 variantes mal asignadas o mal nombradas en el segundo paso, ver guión adecuar_alelos.R
 plink --bfile segundo_paso --exclude tercer_paso-merge.missnp --make-bed --out segundo_paso
 plink --bfile segundo_paso --bmerge $proyecto.4 --allow-no-sex --make-bed --out tercer_paso
