@@ -83,7 +83,7 @@ grep RL ../../listas/eliminacion_QC/IBD_1.txt | grep -v RL111  | cut -f 1-4 > te
 nano temp.txt
 cat temp.txt >> ../../listas/eliminacion_QC/ind_dupli.txt
 rm temp.txt
-cut -f1,2 ../listas/eliminacion_QC/IBD_1.txt | cat - <(cut -f3,4 ../listas/eliminacion_QC/IBD_1.txt) | sort -u > ../listas/eliminacion_QC/ind_dupli.txt
+cut -f1,2 ../../listas/eliminacion_QC/IBD_1.txt | cat - <(cut -f3,4 ../../listas/eliminacion_QC/IBD_1.txt) | sort -u > ../listas/eliminacion_QC/ind_dupli.txt
 cat <(grep -eCTR -eH1 ../../listas/eliminacion_QC/IBD_1.txt | cut -f1-2) <(grep -eCTR -eH1 ../../listas/eliminacion_QC/IBD_1.txt | cut -f3-4) | sort -u >> ../../listas/eliminacion_QC/ind_dupli.txt
 
 ##tenemos lista de duplicados, sigue sexo discordante
