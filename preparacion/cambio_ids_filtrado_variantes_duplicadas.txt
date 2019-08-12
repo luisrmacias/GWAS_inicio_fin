@@ -1,6 +1,6 @@
 ##se crean archivos binarios
-cd ~/analisis_asociacion/adultos_mega/
-carpeta=calidad/5_fases
+cd ~/analisis_asociacion/convivencias_medix_qxob/adultos_mega/
+carpeta=calidad/cluster3
 genotipos="$(find fuentes/ | grep .bim | sed 's/.\{4\}$//')"
 
 proyecto=cardio
@@ -11,14 +11,14 @@ echo 0 > $TEMPFILE
 for genos in $genotipos
 do
 COUNTER=$[$(cat $TEMPFILE) + 1]
-plink --bfile $genos --list-duplicate-vars ids-only suppress-first --make-bed --out $carpeta/$proyecto.$COUNTER
+plink --file $genos --list-duplicate-vars ids-only suppress-first --make-bed --out $carpeta/$proyecto.$COUNTER
 plink --bfile $carpeta/$proyecto.$COUNTER --exclude $carpeta/$proyecto.$COUNTER.dupvar --make-bed --out $carpeta/$proyecto.$COUNTER
 Rscript ~/repos/gwas_inicio_fin/preparacion/sitios_dup_bim.R $carpeta/$proyecto.$COUNTER.bim
-awk -i inplace '{print $1, $2=$1".dup"}' ~/analisis_asociacion/$proyecto/listas/eliminacion_QC/SNP_duplicados.list 
+awk -i inplace '{print $1, $2=$1".dup"}' ~/analisis_asociacion/convivencias_medix_qxob/adultos_mega/listas/eliminacion_QC/SNP_duplicados.list
 plink --bfile $carpeta/$proyecto.$COUNTER --update-name listas/eliminacion_QC/SNP_duplicados.list --make-bed --out $carpeta/$proyecto.$COUNTER
 plink --bfile $carpeta/$proyecto.$COUNTER --exclude <(cut -f2 listas/eliminacion_QC/SNP_duplicados.list) --make-bed --out $carpeta/$proyecto.$COUNTER
 ##cambiamos los nombres
-plink --bfile $carpeta/$proyecto.$COUNTER --update-name ~/analisis_asociacion/niños/niños/fuentes/Multi-EthnicGlobal_B1_b144_rsids.txt --make-bed --out $carpeta/$proyecto.$COUNTER
+plink --bfile $carpeta/$proyecto.$COUNTER --update-name ~/analisis_asociacion/convivencias_medix_qxob/niños/fuentes/Multi-EthnicGlobal_B1_b144_rsids.txt --make-bed --out $carpeta/$proyecto.$COUNTER
 rm $carpeta/*~
 echo $COUNTER > $TEMPFILE
 done
