@@ -5,7 +5,7 @@ mkdir faseados
 
 cd imputacion
 mkdir faseados/$proyecto
-car_referencias=~/CANDELA/haplotipos/referencias_faseo_ancestria/universales_indigenas
+car_referencias=~/analisis_asociacion/colaboraciones/CANDELA/haplotipos/referencias_faseo_ancestria/universales_indigenas
 
 for chr in {1..21}
 do
@@ -23,7 +23,7 @@ then
 java -jar ~/scripts/beagleyut/conform-gt.24May16.cee.jar ref=$car_referencias/nat_uni_extendido.$chr.vcf.gz gt=vcf/$proyecto/$proyecto.$chr.vcf chrom=$chr match=ID out=mod.$proyecto.$chr
 fi
 cd faseados/$proyecto
-java -jar ~/scripts/beagleyut/beagle.15Sep18.8a0.jar ref=../../ref.$chr.bref3 gt=../../mod.$proyecto.$chr.vcf.gz map=~/CANDELA/haplotipos/listas/mapa_beagle/plink.chr$chr.GRCh37.map iterations=5 nthreads=22 window=40 overlap=8 out=$proyecto.chr$chr
+java -jar ~/scripts/beagleyut/beagle.15Sep18.8a0.jar ref=../../ref.$chr.bref3 gt=../../mod.$proyecto.$chr.vcf.gz map=~/analisis_asociacion/colaboraciones/CANDELA/haplotipos/listas/mapa_beagle/plink.chr$chr.GRCh37.map iterations=5 nthreads=22 window=40 overlap=8 out=$proyecto.chr$chr
 cd ../..
 rm *$chr*.*
 done
