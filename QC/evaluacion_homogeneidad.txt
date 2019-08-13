@@ -26,13 +26,13 @@ done
 unlink $TEMPFILE
 
 ##comparamos frecuencias alélicas entre estudios con y sin filtro de frecuencia alélica
-plink --bfile adultos_filtroind --assoc --loop-assoc estudio.txt --pfilter 1e-10 --out freq_entre_estudios
-plink --bfile adultos_filtroind --assoc --loop-assoc estudio.txt --pfilter 1e-10 --maf 0.01 --hwe 1e-10 --out freq_entre_estudios_filtro
+plink --bfile $proyecto.filtroind --assoc --loop-assoc estudio.txt --pfilter 1e-10 --out freq_entre_estudios
+plink --bfile $proyecto.filtroind --assoc --loop-assoc estudio.txt --pfilter 1e-10 --maf 0.01 --hwe 1e-10 --out freq_entre_estudios_filtro
 
 ##tras inspeción detallada de los resultados decidimos eliminar SNP que en las comparaciones de asignaciones y estudio difieren entre los grupos con significancia menor a 1e-14 (16 snp)
 awk '$9<1e-14' *filtro.[1-4]* | tr -s [:blank:] "\t" | cut -f3 | sort -u > snp_difieren_estudio_asignacion.txt
 rm freq_entre_*
-plink --bfile adultos_filtroind --exclude snp_difieren_estudio_asignacion.txt --make-bed --out adultos_filtroind
+plink --bfile $proyecto.filtroind --exclude snp_difieren_estudio_asignacion.txt --make-bed --out $proyecto.filtroind
 rm *~
 
 ##en niños solo 2 SNP difieren entre los grupos de asignación tras filtrado, rs112269191 y rs75733551, no los eliminamos, marcamos como sospechosos.
