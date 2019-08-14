@@ -7,8 +7,8 @@ ances <- read.table(paste0(estudio,".3.Q"))
 ances <- cbind(read.table(paste0(estudio, ".fam"))[1:2], ances)
 status <- read.table(paste0(estudio, ".fam"))[c(2,6)]
 names(ances)[1:2] <- c("FID", "IID")
-ids_ceu <- scan("~/CANDELA/haplotipos/listas/grupos/fundadores_CEU.txt", what='list')
-ids_yri <- scan("~/CANDELA/haplotipos/listas/grupos/fundadores_YRI.txt", what='list')
+ids_ceu <- scan("~/analisis_asociacion/colaboraciones/CANDELA/haplotipos/listas/grupos/fundadores_CEU.txt", what='list')
+ids_yri <- scan("~/analisis_asociacion/colaboraciones/CANDELA/haplotipos/listas/grupos/fundadores_YRI.txt", what='list')
 indigenas <- grepl("FN|TOT|ZAP|NFM", ances$IID)
 summary(ances[ances$IID %in% ids_ceu,3:5])
 ##V1 CEU
