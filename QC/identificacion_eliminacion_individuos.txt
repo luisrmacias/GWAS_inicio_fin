@@ -13,7 +13,7 @@ plink --bfile $proyecto.ideneli --genome --out $proyecto.ideneli
 awk '$10>0.6' $proyecto.ideneli.genome | sort -grk 10 | grep -e CON -e CTR | less
 ##controles internos coinciden, RL111 idéntico a controles internos
 awk '$10<0.6 && $10>0.2' $proyecto.ideneli.genome | grep -v \\bCH | wc
-##404 pares de parientes en primer o segundo grado (sin CH)
+##409 pares de parientes en primer o segundo grado (sin CH)
 ##búsqueda de individuos con mismo identificador y que no coincidan
 awk '$2==$4 && $9<0.9' $proyecto.ideneli.genome
 
@@ -67,12 +67,14 @@ q()
 
 grep -v CTR ../../listas/eliminacion_QC/IBD_1.txt 
 ##los controles coinciden entre sí
-grep RL ../../listas/eliminacion_QC/IBD_1.txt
-cut -f2 ../../listas/eliminacion_QC/IBD_1.txt | grep RL | grep -f - ~/analisis_asociacion/adultos_mega/cirugia_bar/fenotipos/para_asoc/porciento_excesoIMCperdido.phen
-cut -f4 ../../listas/eliminacion_QC/IBD_1.txt | grep RL | grep -f - ~/analisis_asociacion/adultos_mega/cirugia_bar/fenotipos/para_asoc/porciento_excesoIMCperdido.phen
+grep \\bRL ../../listas/eliminacion_QC/IBD_1.txt
+cut -f2 ../../listas/eliminacion_QC/IBD_1.txt | grep \\bRL | grep -f - ~/analisis_asociacion/adultos_mega/cirugia_bar/fenotipos/para_asoc/porciento_excesoIMCperdido.phen
+cut -f4 ../../listas/eliminacion_QC/IBD_1.txt | grep \\bRL | grep -f - ~/analisis_asociacion/adultos_mega/cirugia_bar/fenotipos/para_asoc/porciento_excesoIMCperdido.phen
 ##RL_112 se elimina por encima de RL013 porque este último tiene seguimiento
 ##RL115 se elimina por encima de RL_384 porque este último tiene doble genotipificación
 ##Se elimina RL281
+##RL711 y SOL_812 son la misma persona, quitamos SOL_812
+##RL736 se extrajo de sangre, id correcto. Quitamos RL73/
 ##para el resto se eliminan ambos
 grep -v -e RL -e CTR -e H1 ../../listas/eliminacion_QC/IBD_1.txt
 ##de medix mantenemos segunda columna excepto MZ1_0998 por SOL_799
@@ -92,6 +94,6 @@ grep PROBLEM $proyecto.ideneli.sexcheck | awk '$3!=0 && $4!=0' | tr -s [:blank:]
 cat > duplicados_perdidos.txt
 
 
-cat $proyecto.ideneli.irem ../../listas/eliminacion_QC/ind_dupli.txt ../../listas/eliminacion_QC/noconcuerdasexo_ids.txt duplicados_perdidos.txt | grep -v FID > ../../listas/eliminacion_QC/conjunto_eliminar.txt
+cat $proyecto.ideneli.irem ../../listas/eliminacion_QC/ind_dupli.txt ../../listas/eliminacion_QC/noconcuerdasexo_ids.txt duplicados_perdidos.txt | grep -v FID | sort -u > ../../listas/eliminacion_QC/conjunto_eliminar.txt
 
 plink --bfile $proyecto --remove ../../listas/eliminacion_QC/conjunto_eliminar.txt --make-bed --out $proyecto.filtroind
