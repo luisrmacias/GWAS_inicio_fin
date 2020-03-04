@@ -26,12 +26,25 @@ names(lip_sumas) <- gsub("\\+", "", names(lip_sumas))
 
 blancos <- c("Total.PE", "Total.THC", "Total.dhCer")
 blancos <- lip_sumas[grep(paste(blancos, collapse="$|^"), names(lip_sumas))]
+
 load("cirugia_bar/fenotipos/histologia_revisada.RData")
 rm(biliares, pando, muestras_elim)
 all(rownames(blancos) %in% morbidos$ID)
 ##TRUE
-blancos <- cbind(morbidos[pmatch(rownames(blancos), morbidos$ID), c("GENERO", "EDAD", "IMC", "PC1", "PC2")], blancos)
+blancos <- cbind(morbidos[pmatch(rownames(blancos), morbidos$ID), c("IID", "GENERO", "EDAD", "IMC", "PC1", "PC2")], blancos)
+boxCox(lm(Total.PE~GENERO + EDAD + IMC + PC1 + PC2, data=blancos))
+#raíz cuarta
+boxCox(lm(Total.THC~GENERO + EDAD + IMC + PC1 + PC2, data=blancos))
+#raíz cuadrada
+boxCox(lm(Total.dhCer~GENERO + EDAD + IMC + PC1 + PC2, data=blancos))
+#logaritmo natural
+
+blancos[7:9] <- cbind(blancos[7]^0.25, sqrt(blancos[8]), log(blancos[9]))
 
 cgeno <- read.table("cirugia_bar/imputados/fusionados/adultos.082019.QC.fam")
 cgeno <- cgeno[grepl("^RL|^GEA", cgeno$V2),]
-morbidos[
+blancos$IID[!(blancos$IID %in% cgeno$V2)]
+##revisamos uno por uno, ninguno tiene microarreglo ADN
+
+fenos <- with(blancos[blancos$IID %in% cgeno$V2,], data.frame(FID=0, IID=IID, Total.PE, Total.THC, Total.dhCer))
+write.table(fenos, "cirugia_bar/fenotipos/para_asoc/PE_THC_dhCer.phen", quote=FALSE, row.names=FALSE)
