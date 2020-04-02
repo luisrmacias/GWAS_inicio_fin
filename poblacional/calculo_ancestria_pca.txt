@@ -7,5 +7,5 @@ plink --bfile ancestrales.$proyecto.indep --read-genome ancestrales.$proyecto.in
 #################################################################################
 ##hay que hacer 'cajas_ancestria.R' primero para conocer las columnas
 nano ancestrales.$proyecto.indep.3.Q
-cut -f 2-7 -d " " ancestrales.$proyecto.indep.eigenvec | paste - ancestrales.$proyecto.indep.3.Q | grep -v -e NA[0-9] -e FN -e TOT > componentes_ancestrias.$proyecto.txt
+cut -f 2-7 -d " " ancestrales.$proyecto.indep.eigenvec | paste -d " " - ancestrales.$proyecto.indep.3.Q | grep -v -e NA[0-9] -e FN -e TOT > componentes_ancestrias.$proyecto.txt
 ##cut -f 2-7 -d " " ancestrales.$proyecto.indep.eigenvec | paste - ancestrales.$proyecto.indep.3.Q | grep -e RL -e GEA -e MZ1 -e TER -e RED -e SOL -e CON -e ICN -e GC -e IID > componentes_ancestrias.$proyecto.txt

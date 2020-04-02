@@ -5,8 +5,8 @@ estudio=PEMEX
 bcftools concat -f fusion_filtrado.txt -Oz -o ~/analisis_asociacion/adultos_mega/cirugia_bar/imputados/fusionados/$proyecto.vcf.gz
 
 ##buscamos variantes no incluídas en referencia de 1000 genomas pero sí en microarreglo
-cd ~/analisis_asociacion/adultos_mega/cirugia_bar/imputados/fusionados
-base=~/analisis_asociacion/$estudio/calidad/cluster3/$proyecto.QC
+cd ~/analisis_asociacion/convivencias_medix_qxob/adultos_mega/cirugia_bar/imputados/fusionados
+base=~/analisis_asociacion/convivencias_medix_qxob/adultos_mega/calidad/cluster3/faseo/$proyecto.QC
 plink --bfile $base --recode vcf-iid --geno 0.9999 --mac 5 --out $proyecto/$proyecto.sinfasear
 bgzip $proyecto/$proyecto.sinfasear.vcf && tabix $proyecto/$proyecto.sinfasear.vcf.gz
 bcftools query -f '%CHROM\t%POS\n' $proyecto/$proyecto.vcf.gz > enfusion_posfaseo.txt

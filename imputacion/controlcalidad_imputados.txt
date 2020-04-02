@@ -1,7 +1,7 @@
 cd /export/home/lmacias/analisis_asociacion/adultos_mega/cirugia_bar/imputados/fusionados
-estudio=fusion_noviembre2018
+proyecto=fusion_noviembre2018
 lista_sexos=/export/home/lmacias/analisis_asociacion/PEMEX
-plink --vcf $proyecto.genoref.vcf.gz --const-fid --update-sex <(awk '{print 0,$2,$3}' $base.fam) --make-bed --out $proyecto
+plink --vcf $proyecto.genoref.vcf.gz --const-fid --update-sex <(awk '{print 0,$2,$5}' ../../../$base.fam) --make-bed --out $proyecto
 
 ##agregamos fenotipo y sexo
 awk -i inplace '$2~/DCAC/ {$6=1} 1' $proyecto/$proyecto.fam
@@ -30,8 +30,8 @@ fam[is.na(fam[,6]),6] <- c(2, 1, 2)
 write.table(fam, "fusion_noviembre2018.fam", col.names=FALSE, row.names=FALSE, quote=FALSE)
 
 cut -f2 -d " " $lista_sexos
-plink --bfile $proyecto/$proyecto.imputado.fusionado --geno 0.05 --make-bed --out $proyecto/$proyecto.QC
-plink --bfile $proyecto/$proyecto/$proyecto.QC --freq --hardy --out $proyecto/$proyecto.QC
+plink --bfile $proyecto/$proyecto --geno 0.05 --make-bed --out $proyecto/$proyecto.QC
+plink --bfile $proyecto/$proyecto.QC --freq --hardy --out $proyecto/$proyecto.QC
 plink --bfile $proyecto/$proyecto.QC --maf 0.025 --hwe 1e-5 --make-bed --out $proyecto/$proyecto.QC
 ls $proyecto/*~
 rm $proyecto/*~
@@ -42,7 +42,7 @@ awk '$10>0.9' $proyecto/$proyecto.QC.genome
 #seguimos con 9 duplicados, 6 de ellos con misma clave. En cuanto a los 3 con clave distinta, eliminamos el par excepto 115 y 384, mismo individuo.
 ##DEJAMOS PENDIENTE ELECCIÓN ENTRE ELIMINAR RL115 y RL_384. Dependerá de datos de secuenciación.
 cat <(awk '$10>0.9 {print $1,$2}' $proyecto/$proyecto.QC.genome | grep -v 384) <(awk '$10>0.9 {print $3,$4}' $proyecto/$proyecto.QC.genome | tail -n2) >> ~/analisis_asociacion/adultos_mega/listas/eliminacion_QC/conjunto_eliminar.txt
-plink --bfile $proyecto/$proyecto.QC --remove ~/analisis_asociacion/adultos_mega/listas/eliminacion_QC/conjunto_eliminar.txt --make-bed --out $proyecto/$proyecto.QC
+plink --bfile $proyecto/$proyecto.QC --remove <(awk '{print $1=0,$2}' ~/analisis_asociacion/convivencias_medix_qxob/adultos_mega/listas/eliminacion_QC/conjunto_eliminar.txt) --make-bed --out $proyecto/$proyecto.QC
 ls *~
 rm *~
 
